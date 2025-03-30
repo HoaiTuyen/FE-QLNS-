@@ -14,8 +14,17 @@ const LoginTest = () => {
     setLoading(true);
     try {
       const resLogin = await loginUser(values.email, values.password);
+      console.log(resLogin);
+
       if (resLogin.status === 200) {
-        localStorage.setItem("user", JSON.stringify(resLogin.data));
+        const userData = {
+          email: resLogin.data.email,
+          password: values.password,
+          type: resLogin.data.type,
+          status: resLogin.data.status,
+          username: resLogin.data.username,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
         const userType = resLogin.data.type;
         if (userType === "ADMIN") {
           toast.success(resLogin.message);
@@ -29,7 +38,7 @@ const LoginTest = () => {
       if (error.response && error.response.status !== 200) {
         toast.error(error.response.data.message);
       } else {
-        toast.error("Lỗi khi tạo tài khoản. Vui lòng thử lại.");
+        toast.error("Lỗi khi đăng nhập. Vui lòng thử lại.");
       }
     } finally {
       setLoading(false);

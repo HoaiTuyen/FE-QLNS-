@@ -3,13 +3,27 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./components/pages/AdminPage";
 import UserPage from "./components/pages/UserPage";
 import { getCurrentUser } from "./services/authService";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
+
 const PrivateRoute = ({ children, allowedTypes }) => {
   const user = getCurrentUser();
-
-  if (!user) return <Navigate to="/" />;
-  if (!allowedTypes.includes(user.type)) return <Navigate to="/" />;
-
+  const isLoggedIn = !!user;
+  const isAllowed = user && allowedTypes.includes(user.type);
+  useEffect(() => {
+    if (isLoggedIn && !isAllowed) {
+      toast.error("Bạn không có quyền truy cập trang này");
+    }
+  }, [isLoggedIn, isAllowed]);
+  if (!isLoggedIn) return <Navigate to="/" />;
+  if (!isAllowed) {
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <h2>Không có quyền truy cập</h2>
+        <p>Vui lòng liên hệ Anh Tòn nếu bạn cần quyền truy cập.</p>
+      </div>
+    );
+  }
   return children;
 };
 function App() {
