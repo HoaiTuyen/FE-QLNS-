@@ -14,36 +14,42 @@ const LoginTest = () => {
     setLoading(true);
     try {
       const resLogin = await loginUser(values.email, values.password);
-      console.log(resLogin);
 
-      if (resLogin.status === 200) {
+      if (resLogin.status === 200 && resLogin.data) {
+        const { email, type, status, username } = resLogin.data;
+
         const userData = {
-          email: resLogin.data.email,
+          email,
           password: values.password,
-          type: resLogin.data.type,
-          status: resLogin.data.status,
-          username: resLogin.data.username,
+          type,
+          status,
+          username,
         };
+
         localStorage.setItem("user", JSON.stringify(userData));
-        const userType = resLogin.data.type;
-        if (userType === "ADMIN") {
-          toast.success(resLogin.message);
+
+        toast.success(resLogin.message || "Đăng nhập thành công!");
+
+        if (type === "ADMIN") {
           navigate("/admin");
         } else {
-          toast.success(resLogin.message);
           navigate("/user");
         }
+      } else {
+        toast.error(resLogin.message || "Đăng nhập thất bại.");
       }
     } catch (error) {
-      if (error.response && error.response.status !== 200) {
-        toast.error(error.response.data.message);
+      console.error("Lỗi đăng nhập:", error);
+      if (error.response) {
+        toast.error(error.response.data?.message || "Đăng nhập thất bại.");
       } else {
-        toast.error("Lỗi khi đăng nhập. Vui lòng thử lại.");
+        toast.error("Không thể kết nối đến máy chủ.");
       }
     } finally {
       setLoading(false);
     }
   };
+
   const toggleForm = () => {
     setIsLogin(!isLogin);
   };
