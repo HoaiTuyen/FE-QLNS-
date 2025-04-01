@@ -36,12 +36,11 @@ const Login = () => {
           navigate("/user");
         }
       } else {
-        // toast.error(resLogin.message || "Đăng nhập thất bại.");
-        toast.error("Đăng nhập thất bại.");
+        toast.error(resLogin.message || "Login failed");
       }
     } catch (error) {
       if (error.response) {
-        toast.error(error.response.data?.message || "Đăng nhập thất bại.");
+        toast.error(error.response.data?.message || "Login failed");
       } else {
         toast.error(error, "Không thể kết nối đến máy chủ.");
       }
