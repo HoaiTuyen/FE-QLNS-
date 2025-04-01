@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser, registerUser } from "../../services/authService";
-import { Form, Input, Button, Typography } from "antd";
+import { Spin, Form, Input, Button, Typography } from "antd";
 import { toast } from "react-toastify";
 
 const { Text, Link } = Typography;
-const LoginTest = () => {
+const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -14,29 +14,33 @@ const LoginTest = () => {
     setLoading(true);
     try {
       const resLogin = await loginUser(values.email, values.password);
-      console.log(resLogin);
 
-      if (resLogin.status === 200) {
+      if (resLogin.status === 200 && resLogin.data) {
+        const { email, type, status, username } = resLogin.data;
+
         const userData = {
-          email: resLogin.data.email,
+          email,
           password: values.password,
-          type: resLogin.data.type,
-          status: resLogin.data.status,
-          username: resLogin.data.username,
+          type,
+          status,
+          username,
         };
+
         localStorage.setItem("user", JSON.stringify(userData));
-        const userType = resLogin.data.type;
-        if (userType === "ADMIN") {
-          toast.success(resLogin.message);
+
+        toast.success(resLogin.message || "Đăng nhập thành công!");
+
+        if (type === "ADMIN") {
           navigate("/admin");
         } else {
-          toast.success(resLogin.message);
           navigate("/user");
         }
+      } else {
+        toast.error(resLogin.message || "Login failed");
       }
     } catch (error) {
-      if (error.response && error.response.status !== 200) {
-        toast.error(error.response.data.message);
+      if (error.response) {
+        toast.error(error.response.data?.message || "Login failed");
       } else {
         toast.error("Error while logging in. Please try again.");
       }
@@ -44,6 +48,7 @@ const LoginTest = () => {
       setLoading(false);
     }
   };
+
   const toggleForm = () => {
     setIsLogin(!isLogin);
   };
@@ -73,58 +78,63 @@ const LoginTest = () => {
     }
   };
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto", marginTop: 60 }}>
-      <h2 style={{ textAlign: "center", marginBottom: 24 }}>
-        {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
-      </h2>
+    <Spin spinning={loading} tip="Đợi bố mày tí..." size="large">
+      <div style={{ maxWidth: 400, margin: "0 auto", marginTop: 60 }}>
+        <h2 style={{ textAlign: "center", marginBottom: 24 }}>
+          {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
+        </h2>
 
-      <Form layout="vertical" onFinish={isLogin ? handleLogin : handleRegister}>
-        {!isLogin && (
+        <Form
+          layout="vertical"
+          onFinish={isLogin ? handleLogin : handleRegister}
+        >
+          {!isLogin && (
+            <Form.Item
+              label="Tên người dùng"
+              name="username"
+              rules={[{ required: true, message: "Ít nhất 5 kí tự" }]}
+            >
+              <Input placeholder="Nhập tên của bạn" />
+            </Form.Item>
+          )}
+
           <Form.Item
-            label="Tên người dùng"
-            name="username"
-            rules={[{ required: true, message: "Ít nhất 5 kí tự" }]}
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email" },
+              { type: "email", message: "Email không hợp lệ" },
+            ]}
           >
-            <Input placeholder="Nhập tên của bạn" />
+            <Input placeholder="Nhập email" />
           </Form.Item>
-        )}
 
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Vui lòng nhập email" },
-            { type: "email", message: "Email không hợp lệ" },
-          ]}
-        >
-          <Input placeholder="Nhập email" />
-        </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+          >
+            <Input.Password placeholder="Nhập mật khẩu" />
+          </Form.Item>
 
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
-        >
-          <Input.Password placeholder="Nhập mật khẩu" />
-        </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block>
+              {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
+            </Button>
+          </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading} block>
-            {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
-          </Button>
-        </Form.Item>
-
-        <div style={{ textAlign: "center" }}>
-          <Text>
-            {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
-            <Link onClick={toggleForm}>
-              {isLogin ? "Đăng ký ngay" : "Quay lại đăng nhập"}
-            </Link>
-          </Text>
-        </div>
-      </Form>
-    </div>
+          <div style={{ textAlign: "center" }}>
+            <Text>
+              {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
+              <Link onClick={toggleForm}>
+                {isLogin ? "Đăng ký ngay" : "Quay lại đăng nhập"}
+              </Link>
+            </Text>
+          </div>
+        </Form>
+      </div>
+    </Spin>
   );
 };
 
-export default LoginTest;
+export default Login;
