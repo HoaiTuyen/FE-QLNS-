@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser, registerUser } from "../../services/authService";
-import { Form, Input, Button, Typography } from "antd";
+import { Spin, Form, Input, Button, Typography } from "antd";
 import { toast } from "react-toastify";
 
 const { Text, Link } = Typography;
-const LoginTest = () => {
+const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -36,14 +36,14 @@ const LoginTest = () => {
           navigate("/user");
         }
       } else {
-        toast.error(resLogin.message || "Đăng nhập thất bại.");
+        // toast.error(resLogin.message || "Đăng nhập thất bại.");
+        toast.error("Đăng nhập thất bại.");
       }
     } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
       if (error.response) {
         toast.error(error.response.data?.message || "Đăng nhập thất bại.");
       } else {
-        toast.error("Không thể kết nối đến máy chủ.");
+        toast.error(error, "Không thể kết nối đến máy chủ.");
       }
     } finally {
       setLoading(false);
@@ -79,58 +79,63 @@ const LoginTest = () => {
     }
   };
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto", marginTop: 60 }}>
-      <h2 style={{ textAlign: "center", marginBottom: 24 }}>
-        {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
-      </h2>
+    <Spin spinning={loading} tip="Đợi bố mày tí..." size="large">
+      <div style={{ maxWidth: 400, margin: "0 auto", marginTop: 60 }}>
+        <h2 style={{ textAlign: "center", marginBottom: 24 }}>
+          {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
+        </h2>
 
-      <Form layout="vertical" onFinish={isLogin ? handleLogin : handleRegister}>
-        {!isLogin && (
+        <Form
+          layout="vertical"
+          onFinish={isLogin ? handleLogin : handleRegister}
+        >
+          {!isLogin && (
+            <Form.Item
+              label="Tên người dùng"
+              name="username"
+              rules={[{ required: true, message: "Ít nhất 5 kí tự" }]}
+            >
+              <Input placeholder="Nhập tên của bạn" />
+            </Form.Item>
+          )}
+
           <Form.Item
-            label="Tên người dùng"
-            name="username"
-            rules={[{ required: true, message: "Ít nhất 5 kí tự" }]}
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email" },
+              { type: "email", message: "Email không hợp lệ" },
+            ]}
           >
-            <Input placeholder="Nhập tên của bạn" />
+            <Input placeholder="Nhập email" />
           </Form.Item>
-        )}
 
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Vui lòng nhập email" },
-            { type: "email", message: "Email không hợp lệ" },
-          ]}
-        >
-          <Input placeholder="Nhập email" />
-        </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+          >
+            <Input.Password placeholder="Nhập mật khẩu" />
+          </Form.Item>
 
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
-        >
-          <Input.Password placeholder="Nhập mật khẩu" />
-        </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block>
+              {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
+            </Button>
+          </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading} block>
-            {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
-          </Button>
-        </Form.Item>
-
-        <div style={{ textAlign: "center" }}>
-          <Text>
-            {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
-            <Link onClick={toggleForm}>
-              {isLogin ? "Đăng ký ngay" : "Quay lại đăng nhập"}
-            </Link>
-          </Text>
-        </div>
-      </Form>
-    </div>
+          <div style={{ textAlign: "center" }}>
+            <Text>
+              {isLogin ? "Chưa có tài khoản?" : "Đã có tài khoản?"}{" "}
+              <Link onClick={toggleForm}>
+                {isLogin ? "Đăng ký ngay" : "Quay lại đăng nhập"}
+              </Link>
+            </Text>
+          </div>
+        </Form>
+      </div>
+    </Spin>
   );
 };
 
-export default LoginTest;
+export default Login;

@@ -8,7 +8,8 @@ export const loginUser = async (email, password) => {
 
     return res;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    return err;
   }
 };
 export const getCurrentUser = () => {
