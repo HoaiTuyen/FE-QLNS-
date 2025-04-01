@@ -38,7 +38,7 @@ const LoginTest = () => {
       if (error.response && error.response.status !== 200) {
         toast.error(error.response.data.message);
       } else {
-        toast.error("Lỗi khi đăng nhập. Vui lòng thử lại.");
+        toast.error("Error while logging in. Please try again.");
       }
     } finally {
       setLoading(false);
