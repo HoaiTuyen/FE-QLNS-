@@ -2,6 +2,8 @@ import Login from "./components/Auth/Login";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminPage from "./components/pages/AdminPage";
 import UserPage from "./components/pages/UserPage";
+import EmployeeDashboard from "./components/pages/Employee/Dashboard";
+import EmployeeCreateForm from "./components/pages/Employee/CreateForm";
 import { getCurrentUser } from "./services/authService";
 import { ToastContainer, toast } from "react-toastify";
 import { useEffect } from "react";
@@ -40,6 +42,24 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/employees"
+            element={
+              <PrivateRoute allowedTypes={["ADMIN"]}>
+                <EmployeeDashboard />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/employees/create"
+            element={
+              <PrivateRoute allowedTypes={["ADMIN"]}>
+                <EmployeeCreateForm />
+              </PrivateRoute>
+            }
+          />
+
           <Route
             path="/user"
             element={
