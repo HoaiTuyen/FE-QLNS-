@@ -8,7 +8,6 @@ axiosClient.interceptors.request.use((config) => {
   try {
     const userStr = localStorage.getItem("user");
     const user = userStr ? JSON.parse(userStr) : null;
-    console.log(user);
 
     if (user?.email && user?.password) {
       const token = btoa(`${user.email}:${user.password}`);

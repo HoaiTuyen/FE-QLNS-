@@ -57,6 +57,18 @@ const AdminPage = () => {
         <Button variant="contained" onClick={() => navigate("/employees")}>
           Quản lý Nhân viên
         </Button>
+        {/* <Button variant="contained" onClick={() => navigate("/users")}>
+          Quản lý Người dùng
+        </Button> */}
+        {/* <Button variant="contained" onClick={() => navigate("/salarys")}>
+          Quản lý Lương
+        </Button> */}
+        {/* <Button variant="contained" onClick={() => navigate("/positions")}>
+          Quản lý Chức vụ
+        </Button> */}
+        {/* <Button variant="contained" onClick={() => navigate("/departments")}>
+          Quản lý Phòng ban
+        </Button> */}
         <Button variant="outlined" color="error" onClick={handleLogout}>
           Đăng xuất
         </Button>

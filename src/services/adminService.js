@@ -31,7 +31,7 @@ export const addEmployee = async (employeeData) => {
     const response = await axiosClient.post("/employee/add", employeeData);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm nhân viên:", error);
+    console.error("Lỗi khi thêm nhân viên:", error.response?.data || error.message);
     throw error;
   }
 };
