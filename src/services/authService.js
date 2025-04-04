@@ -1,16 +1,11 @@
 import axiosClient from "../utils/axios";
 export const loginUser = async (email, password) => {
-  try {
-    const res = await axiosClient.post("/auth/login", {
-      email,
-      password,
-    });
+  const res = await axiosClient.post("/auth/login", {
+    email,
+    password,
+  });
 
-    return res;
-  } catch (err) {
-    // console.log(err);
-    return err;
-  }
+  return res;
 };
 export const getCurrentUser = () => {
   const userStr = localStorage.getItem("user");

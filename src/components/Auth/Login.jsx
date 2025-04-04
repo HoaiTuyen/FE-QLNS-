@@ -14,9 +14,9 @@ const Login = () => {
     setLoading(true);
     try {
       const resLogin = await loginUser(values.email, values.password);
-
       if (resLogin.status === 200 && resLogin.data) {
         const { email, type, status, username } = resLogin.data;
+        console.log(resLogin);
 
         const userData = {
           email,
@@ -78,7 +78,7 @@ const Login = () => {
     }
   };
   return (
-    <Spin spinning={loading} tip="Đợi bố mày tí..." size="large">
+    <Spin spinning={loading} tip="Đang xử lí..." size="large">
       <div style={{ maxWidth: 400, margin: "0 auto", marginTop: 60 }}>
         <h2 style={{ textAlign: "center", marginBottom: 24 }}>
           {isLogin ? "Đăng nhập" : "Tạo tài khoản"}

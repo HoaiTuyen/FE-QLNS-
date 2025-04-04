@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:8089/api/v1",
+  baseURL:
+    import.meta.env.VITE_BACKEND_URL ||
+    "https://backend-manage-human-production.up.railway.app/api/v1",
 });
 
 axiosClient.interceptors.request.use((config) => {
@@ -12,6 +14,8 @@ axiosClient.interceptors.request.use((config) => {
 
     if (user?.email && user?.password) {
       const token = btoa(`${user.email}:${user.password}`);
+      console.log(token);
+
       config.headers.Authorization = `Basic ${token}`;
     }
   } catch (error) {
