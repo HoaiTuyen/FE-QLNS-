@@ -15,10 +15,11 @@ const Login = () => {
     try {
       const resLogin = await loginUser(values.email, values.password);
       if (resLogin.status === 200 && resLogin.data) {
-        const { email, type, status, username } = resLogin.data;
+        const { id, email, type, status, username } = resLogin.data;
         console.log(resLogin);
 
         const userData = {
+          id,
           email,
           password: values.password,
           type,
