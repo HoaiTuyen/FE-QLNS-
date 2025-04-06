@@ -1,10 +1,10 @@
-// src/components/user/UserProfile.jsx
 import React, { useEffect, useState } from "react";
 import { Descriptions, Empty, Spin } from "antd";
 import { getEmployeeById } from "../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import EmptyDataFallback from "../common/EmptyDataFallback";
+
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +22,11 @@ const UserProfile = () => {
           toast.error("Tài khoản chưa có thông tin nhân viên");
         }
       } catch (err) {
+        if (err.response?.status === 404) {
+          toast.error("Không tìm thấy thông tin nhân viên.");
+        } else {
+          toast.error("Lỗi khi lấy thông tin nhân viên.");
+        }
         console.error("Lỗi lấy hồ sơ:", err);
       } finally {
         setLoading(false);
@@ -29,7 +34,7 @@ const UserProfile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [user.id]);
 
   if (loading) return <Spin />;
 

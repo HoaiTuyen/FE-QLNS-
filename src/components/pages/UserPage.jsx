@@ -15,7 +15,7 @@ import UserSalary from "../User/UserSalary";
 import UserProfile from "../User/UserProfile";
 import UserContract from "../User/UserContract";
 import UserChangePassword from "../User/UserChangePassword";
-const UserDepartment = () => <div>Phòng ban & chức vụ</div>;
+import UserDepartment from "../User/UserDepartment";
 
 const { Header, Sider, Content } = Layout;
 

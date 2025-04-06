@@ -20,14 +20,19 @@ const UserContract = () => {
           const employeeId = employeeRes.data.id;
           const contractRes = await getContract(employeeId);
           const contractList = contractRes.data?.contracts || [];
+
           setContracts(contractList);
-          toast.success(contractList.message || "Success");
+          toast.success(contractRes.message || "Success");
         } else {
           toast.error("Không tìm thấy hợp đồng nhân viên.");
         }
       } catch (err) {
-        console.error("Lỗi khi lấy hợp đồng:", err);
-        toast.error("Lỗi khi lấy danh sách hợp đồng.");
+        if (err.response?.status === 404) {
+          toast.error("Không có thông tin hợp đồng");
+        } else {
+          console.error("Lỗi khi lấy hợp đồng:", err);
+          toast.error("Lỗi khi lấy danh sách hợp đồng.");
+        }
       } finally {
         setLoading(false);
       }
