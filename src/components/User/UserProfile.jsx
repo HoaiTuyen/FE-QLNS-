@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Descriptions, Empty, Spin } from "antd";
-import { getEmployeeById } from "../../services/userService";
+import { getEmployeeById, getDetailUser } from "../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import EmptyDataFallback from "../common/EmptyDataFallback";
@@ -14,27 +14,17 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await getEmployeeById(user.id);
+        const userDetail = await getDetailUser(user.email);
+        const res = await getEmployeeById(userDetail.data.employee.id);
+        console.log(res);
+
         if (res.data) {
           setProfile(res.data);
         } else {
           setProfile(null);
-          toast.error("Tài khoản chưa có thông tin nhân viên");
         }
       } catch (err) {
-        if (err.response) {
-          if (err.response.status === 404) {
-            toast.error("Không tìm thấy thông tin nhân viên.");
-          } else {
-            toast.error(
-              err.response.data?.message || "Lỗi khi lấy thông tin nhân viên."
-            );
-            console.error("Lỗi khi lấy hồ sơ:", err);
-          }
-        } else {
-          toast.error("Không thể kết nối đến máy chủ.");
-          console.error("Lỗi không có response:", err);
-        }
+        toast.error(err);
       } finally {
         setLoading(false);
       }

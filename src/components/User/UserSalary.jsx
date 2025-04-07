@@ -34,12 +34,7 @@ const UserSalary = () => {
           toast.error("Không có dữ liệu lương.");
         }
       } catch (err) {
-        if (err.response?.status === 404) {
-          toast.error("Không có thông tin lương");
-        } else {
-          console.error("Lỗi khi lấy lương:", err);
-          toast.error("Có lỗi xảy ra khi lấy thông tin lương.");
-        }
+        toast.error(err);
       } finally {
         setLoading(false);
       }
