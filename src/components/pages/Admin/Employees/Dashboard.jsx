@@ -85,6 +85,11 @@ const EmployeeDashboard = () => {
     loadEmployees();
   };
 
+  const handleEdit = (employee) => {
+    navigate("/employees/update", { state: { employee } }); // Truyền dữ liệu qua state
+    console.log("Employee nhận được:", employee);
+  };
+
   return (
     <Container
       maxWidth="xl"
@@ -178,6 +183,14 @@ const EmployeeDashboard = () => {
                         <TableCell>{formatDate(emp.joiningDate)}</TableCell>
                         <TableCell>{emp.employeeStatus}</TableCell>
                         <TableCell>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleEdit(emp)}
+                            sx={{ mr: 1 }}
+                          >
+                            Sửa
+                          </Button>
                           <Button
                             variant="contained"
                             color="error"

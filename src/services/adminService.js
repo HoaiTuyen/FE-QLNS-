@@ -28,10 +28,23 @@ export const deleteEmployee = async (employeeId) => {
 // Thêm nhân viên mới
 export const addEmployee = async (employeeData) => {
   try {
+    console.log("Dữ liệu gửi tới API:", employeeData);
     const response = await axiosClient.post("/employee/add", employeeData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi thêm nhân viên:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+//Cập nhật thông tin nhân viên
+export const updateEmployee = async (employeeId, employeeData) => {
+  try {
+    console.log("Dữ liệu nhân viên cập nhật:", employeeData);
+    const response = await axiosClient.put(`/employee/update`, employeeData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật nhân viên:", error);
     throw error;
   }
 };

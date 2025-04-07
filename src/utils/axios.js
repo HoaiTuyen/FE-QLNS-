@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || "https://backend-manage-human-production.up.railway.app/api/v1",
+  baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:8080/api/v1/",
 });
 
 axiosClient.interceptors.request.use((config) => {
@@ -16,7 +16,6 @@ axiosClient.interceptors.request.use((config) => {
   } catch (error) {
     console.warn("Không thể parse localStorage user:", error);
   }
-
   return config;
 });
 
@@ -25,6 +24,7 @@ axiosClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
     // Gợi ý: Bạn có thể xử lý lỗi chung ở đây
+    console.error("Phản hồi lỗi từ server:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

@@ -4,6 +4,7 @@ import AdminPage from "./components/pages/AdminPage";
 import UserPage from "./components/pages/UserPage";
 import EmployeeDashboard from "./components/pages/Admin/Employees/Dashboard";
 import EmployeeCreateForm from "./components/pages/Admin/Employees/CreateForm";
+import EmployeeUpdateForm from "./components/pages/Admin/Employees/UpdateForm";
 import { getCurrentUser } from "./services/authService";
 import { ToastContainer, toast } from "react-toastify";
 import { useEffect } from "react";
@@ -12,6 +13,7 @@ const PrivateRoute = ({ children, allowedTypes }) => {
   const user = getCurrentUser();
   const isLoggedIn = !!user;
   const isAllowed = user && allowedTypes.includes(user.type);
+
   useEffect(() => {
     if (isLoggedIn && !isAllowed) {
       toast.error("Bạn không có quyền truy cập trang này");
@@ -26,6 +28,7 @@ const PrivateRoute = ({ children, allowedTypes }) => {
       </div>
     );
   }
+
   return children;
 };
 function App() {
@@ -56,6 +59,15 @@ function App() {
             element={
               <PrivateRoute allowedTypes={["ADMIN"]}>
                 <EmployeeCreateForm />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/employees/update"
+            element={
+              <PrivateRoute allowedTypes={["ADMIN"]}>
+                <EmployeeUpdateForm />
               </PrivateRoute>
             }
           />

@@ -16,11 +16,12 @@ import {
   addEmployee,
   fetchUsers,
   fetchPositions,
-  fetchDepartments,
+  // fetchDepartments,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-function AddEmployee({ onSuccess }) {
+function AddEmployee() {
   const [open, setOpen] = React.useState(true);
   const [formData, setFormData] = React.useState({
     fullName: "",
@@ -30,37 +31,38 @@ function AddEmployee({ onSuccess }) {
     address: "",
     joiningDate: "",
     employeeStatus: "WORKING",
-    userId: "", // Sử dụng username thay vì id
+    userId: "",
     positionId: "",
-    departmentId: "",
+    // departmentId: "",
   });
   const [users, setUsers] = React.useState([]);
   const [positions, setPositions] = React.useState([]);
-  const [departments, setDepartments] = React.useState([]);
+  // const [departments, setDepartments] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
   const toggleDrawer = () => setOpen(!open);
 
   React.useEffect(() => {
     const loadData = async () => {
       try {
-        const [userData, positionData, departmentData] = await Promise.all([
+        const [userData, positionData] = await Promise.all([
           fetchUsers(),
           fetchPositions(),
-          fetchDepartments(),
+          // fetchDepartments(),
         ]);
         setUsers(userData || []);
         setPositions(positionData || []);
-        setDepartments(departmentData || []);
+        // setDepartments(departmentData || []);
         if (userData?.length)
-          setFormData((prev) => ({ ...prev, userId: userData[0].username }));
+          setFormData((prev) => ({ ...prev, userId: userData[0].id }));
         if (positionData?.length)
           setFormData((prev) => ({ ...prev, positionId: positionData[0].id }));
-        if (departmentData?.length)
-          setFormData((prev) => ({
-            ...prev,
-            departmentId: departmentData[0].id,
-          }));
+        // if (departmentData?.length)
+        //   setFormData((prev) => ({
+        //     ...prev,
+        //     departmentId: departmentData[0].id,
+        //   }));
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu tham chiếu:", error);
         toast.error("Lỗi khi tải dữ liệu tham chiếu");
@@ -85,7 +87,7 @@ function AddEmployee({ onSuccess }) {
       };
       await addEmployee(employeeData);
       toast.success("Thêm nhân viên thành công");
-      onSuccess();
+      navigate("/employees");
       setFormData({
         fullName: "",
         dateOfBirth: "",
@@ -94,9 +96,9 @@ function AddEmployee({ onSuccess }) {
         address: "",
         joiningDate: "",
         employeeStatus: "WORKING",
-        userId: users[0]?.username || "",
+        userId: users[0]?.id || "",
         positionId: positions[0]?.id || "",
-        departmentId: departments[0]?.id || "",
+        // departmentId: departments[0]?.id || "",
       });
     } catch (error) {
       toast.error(
@@ -216,8 +218,8 @@ function AddEmployee({ onSuccess }) {
               label="User"
             >
               {users.map((user) => (
-                <MenuItem key={user.username} value={user.username}>
-                  {user.username}
+                <MenuItem key={user.id} value={user.id}>
+                  {user.username || user.id}
                 </MenuItem>
               ))}
             </Select>
@@ -237,7 +239,7 @@ function AddEmployee({ onSuccess }) {
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth required>
+          {/* <FormControl fullWidth required>
             <InputLabel>Phòng ban</InputLabel>
             <Select
               name="departmentId"
@@ -251,7 +253,7 @@ function AddEmployee({ onSuccess }) {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
           <Button
             type="submit"
             variant="contained"
