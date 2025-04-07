@@ -15,7 +15,6 @@ const UserContract = () => {
       try {
         const employeeRes = await getEmployeeById(user.id);
 
-        // Kiểm tra nếu employeeRes.data hoặc employeeRes.data.id là undefined
         if (employeeRes?.data?.id) {
           const employeeId = employeeRes.data.id;
           const contractRes = await getContract(employeeId);

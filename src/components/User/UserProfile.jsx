@@ -22,12 +22,19 @@ const UserProfile = () => {
           toast.error("Tài khoản chưa có thông tin nhân viên");
         }
       } catch (err) {
-        if (err.response?.status === 404) {
-          toast.error("Không tìm thấy thông tin nhân viên.");
+        if (err.response) {
+          if (err.response.status === 404) {
+            toast.error("Không tìm thấy thông tin nhân viên.");
+          } else {
+            toast.error(
+              err.response.data?.message || "Lỗi khi lấy thông tin nhân viên."
+            );
+            console.error("Lỗi khi lấy hồ sơ:", err);
+          }
         } else {
-          toast.error("Lỗi khi lấy thông tin nhân viên.");
+          toast.error("Không thể kết nối đến máy chủ.");
+          console.error("Lỗi không có response:", err);
         }
-        console.error("Lỗi lấy hồ sơ:", err);
       } finally {
         setLoading(false);
       }
