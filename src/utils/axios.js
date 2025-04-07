@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosClient = axios.create({
   baseURL:
     import.meta.env.VITE_BACKEND_URL ||
-    "http://localhost:8080/api/v1",
+    "https://backend-manage-human-production.up.railway.app/api/v1",
 });
 
 axiosClient.interceptors.request.use((config) => {
