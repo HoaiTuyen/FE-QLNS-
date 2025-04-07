@@ -24,13 +24,13 @@ import Sidebar from "../components/Sidebar";
 
 const EmployeeDashboard = () => {
   const [employees, setEmployees] = useState([]);
+  const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 6;
-  const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -42,7 +42,7 @@ const EmployeeDashboard = () => {
       setEmployees(data.employees);
       setTotalPages(data.totalPages); // Cập nhật tổng số trang
     } catch (error) {
-      console.error("Lỗi khi load danh sách:", error);
+      console.error("Lỗi khi load danh sách nhân viên:", error);
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ const EmployeeDashboard = () => {
     }
   };
 
-  // 👉 Hàm xử lý ngày
+  //Hàm xử lý ngày
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("vi-VN");
   };
@@ -100,11 +100,10 @@ const EmployeeDashboard = () => {
       }}
     >
       {/* Header và Sidebar */}
-      <Box sx={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 1200 }}>
-        <Header toggleDrawer={toggleDrawer} />
-      </Box>
+
+      <Header toggleDrawer={toggleDrawer} />
+      <Sidebar open={open} toggleDrawer={toggleDrawer} />
       <Box sx={{ display: "flex", flexGrow: 1 }}>
-        <Sidebar open={open} toggleDrawer={toggleDrawer} />
         <Box
           component="main"
           sx={{
@@ -140,6 +139,7 @@ const EmployeeDashboard = () => {
             <TextField
               label="Tìm kiếm nhân viên"
               variant="outlined"
+              size="small"
               sx={{ width: "50%" }}
               value={searchQuery}
               onChange={(e) =>
