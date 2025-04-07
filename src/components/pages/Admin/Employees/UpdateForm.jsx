@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Thêm useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
   Box,
@@ -15,8 +15,9 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import {
   updateEmployee,
-  fetchUsers,
-  fetchPositions,
+  fetchUsers, // Sử dụng fetchUsers hoặc fetchAvailableUsers
+  fetchDepartments,
+  fetchPositionsByDepartment,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
 
@@ -33,19 +34,20 @@ function UpdateEmployee() {
     employeeStatus: "WORKING",
     userId: "",
     positionId: "",
+    departmentId: "",
   });
   const [users, setUsers] = React.useState([]);
   const [positions, setPositions] = React.useState([]);
+  const [departments, setDepartments] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Thêm useLocation để lấy state
+  const location = useLocation();
+
+  const employee = location.state?.employee;
 
   const toggleDrawer = () => setOpen(!open);
 
-  // Lấy dữ liệu employee từ location.state
-  const employee = location.state?.employee;
-
-  // Điền dữ liệu nhân viên vào form khi component mount
+  // Điền dữ liệu nhân viên từ state
   React.useEffect(() => {
     if (employee) {
       setFormData({
@@ -63,29 +65,77 @@ function UpdateEmployee() {
         employeeStatus: employee.employeeStatus || "WORKING",
         userId: employee.userId || "",
         positionId: employee.positionId || "",
+        departmentId: employee.departmentId || "",
       });
     } else {
       console.log("Không nhận được dữ liệu employee từ state");
     }
   }, [employee]);
 
-  // Tải dữ liệu tham chiếu từ API
+  // Tải dữ liệu tham chiếu ban đầu
   React.useEffect(() => {
     const loadData = async () => {
       try {
-        const [userData, positionData] = await Promise.all([
-          fetchUsers(),
-          fetchPositions(),
+        const [userData, departmentData] = await Promise.all([
+          fetchUsers(), // Hoặc fetchAvailableUsers(employee?.userId) nếu có API
+          fetchDepartments(),
         ]);
-        setUsers(userData || []);
-        setPositions(positionData || []);
+
+        // Lọc user đã sử dụng, giữ lại user hiện tại
+        const currentUserId = employee?.userId;
+        const filteredUsers = userData.filter(
+          (user) => !user.isAssigned || user.id === currentUserId // Giả định có trường isAssigned
+        );
+        setUsers(filteredUsers || []);
+
+        setDepartments(departmentData || []);
+
+        // Tải positions ban đầu dựa trên departmentId
+        if (employee?.departmentId) {
+          const positionData = await fetchPositionsByDepartment(
+            employee.departmentId
+          );
+          console.log("Danh sách chức vụ ban đầu:", positionData);
+          setPositions(positionData || []);
+        }
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu tham chiếu:", error);
         toast.error("Lỗi khi tải dữ liệu tham chiếu");
       }
     };
     loadData();
-  }, []);
+  }, [employee]);
+
+  // Cập nhật positions khi departmentId thay đổi
+  React.useEffect(() => {
+    const loadPositions = async () => {
+      if (formData.departmentId) {
+        try {
+          const positionData = await fetchPositionsByDepartment(
+            formData.departmentId
+          );
+          console.log("Danh sách chức vụ nhận được:", positionData);
+          setPositions(positionData || []);
+          if (
+            positionData?.length &&
+            !positionData.some((pos) => pos.id === formData.positionId)
+          ) {
+            setFormData((prev) => ({
+              ...prev,
+              positionId: positionData[0].id,
+            }));
+          }
+        } catch (error) {
+          console.error("Lỗi khi tải danh sách chức vụ:", error);
+          toast.error("Lỗi khi tải danh sách chức vụ");
+        }
+      } else {
+        setPositions([]);
+        setFormData((prev) => ({ ...prev, positionId: "" }));
+      }
+    };
+    loadPositions();
+  }, [formData.departmentId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,7 +147,7 @@ function UpdateEmployee() {
     setLoading(true);
     try {
       const employeeData = {
-        id: Number(formData.id), // Đảm bảo id là số
+        id: Number(formData.id),
         fullName: formData.fullName,
         dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
         gender: formData.gender,
@@ -172,12 +222,8 @@ function UpdateEmployee() {
               onChange={handleChange}
               label="Giới tính"
             >
-              <MenuItem key="MALE" value="MALE">
-                Nam
-              </MenuItem>
-              <MenuItem key="FEMALE" value="FEMALE">
-                Nữ
-              </MenuItem>
+              <MenuItem value="MALE">Nam</MenuItem>
+              <MenuItem value="FEMALE">Nữ</MenuItem>
             </Select>
           </FormControl>
           <TextField
@@ -214,12 +260,8 @@ function UpdateEmployee() {
               onChange={handleChange}
               label="Trạng thái"
             >
-              <MenuItem key="WORKING" value="WORKING">
-                Đang làm việc
-              </MenuItem>
-              <MenuItem key="INACTIVE" value="INACTIVE">
-                Nghỉ việc
-              </MenuItem>
+              <MenuItem value="WORKING">Đang làm việc</MenuItem>
+              <MenuItem value="INACTIVE">Nghỉ việc</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth required>
@@ -238,21 +280,6 @@ function UpdateEmployee() {
             </Select>
           </FormControl>
           <FormControl fullWidth required>
-            <InputLabel>Chức vụ</InputLabel>
-            <Select
-              name="positionId"
-              value={formData.positionId}
-              onChange={handleChange}
-              label="Chức vụ"
-            >
-              {positions.map((pos) => (
-                <MenuItem key={pos.id} value={pos.id}>
-                  {pos.name || pos.id}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <FormControl fullWidth required>
             <InputLabel>Phòng ban</InputLabel>
             <Select
               name="departmentId"
@@ -266,7 +293,23 @@ function UpdateEmployee() {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl> */}
+          </FormControl>
+          <FormControl fullWidth required>
+            <InputLabel>Chức vụ</InputLabel>
+            <Select
+              name="positionId"
+              value={formData.positionId}
+              onChange={handleChange}
+              label="Chức vụ"
+              disabled={!formData.departmentId}
+            >
+              {positions.map((pos) => (
+                <MenuItem key={pos.id} value={pos.id}>
+                  {pos.name || pos.id}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Button
             type="submit"
             variant="contained"

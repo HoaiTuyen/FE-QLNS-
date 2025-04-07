@@ -15,8 +15,8 @@ import Sidebar from "../components/Sidebar";
 import {
   addEmployee,
   fetchUsers,
-  fetchPositions,
-  // fetchDepartments,
+  fetchDepartments,
+  fetchPositionsByDepartment,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -33,43 +33,85 @@ function AddEmployee() {
     employeeStatus: "WORKING",
     userId: "",
     positionId: "",
-    // departmentId: "",
+    departmentId: "",
   });
   const [users, setUsers] = React.useState([]);
   const [positions, setPositions] = React.useState([]);
-  // const [departments, setDepartments] = React.useState([]);
+  const [departments, setDepartments] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
 
   const toggleDrawer = () => setOpen(!open);
 
+  // Tải dữ liệu ban đầu và đặt giá trị mặc định
   React.useEffect(() => {
-    const loadData = async () => {
+    const loadInitialData = async () => {
       try {
-        const [userData, positionData] = await Promise.all([
+        const [userData, departmentData] = await Promise.all([
           fetchUsers(),
-          fetchPositions(),
-          // fetchDepartments(),
+          fetchDepartments(),
         ]);
         setUsers(userData || []);
-        setPositions(positionData || []);
-        // setDepartments(departmentData || []);
-        if (userData?.length)
-          setFormData((prev) => ({ ...prev, userId: userData[0].id }));
-        if (positionData?.length)
-          setFormData((prev) => ({ ...prev, positionId: positionData[0].id }));
-        // if (departmentData?.length)
-        //   setFormData((prev) => ({
-        //     ...prev,
-        //     departmentId: departmentData[0].id,
-        //   }));
+        setDepartments(departmentData || []);
+
+        // Cập nhật formData với giá trị mặc định
+        const newFormData = { ...formData };
+        if (userData?.length) {
+          newFormData.userId = userData[0].id;
+        }
+        if (departmentData?.length) {
+          newFormData.departmentId = departmentData[0].id;
+        }
+        setFormData(newFormData);
+
+        // Tải positions cho departmentId mặc định
+        if (newFormData.departmentId) {
+          const positionData = await fetchPositionsByDepartment(
+            newFormData.departmentId
+          );
+          setPositions(positionData || []);
+          if (positionData?.length) {
+            setFormData((prev) => ({
+              ...prev,
+              positionId: positionData[0].id,
+            }));
+          }
+        }
       } catch (error) {
-        console.error("Lỗi khi tải dữ liệu tham chiếu:", error);
+        console.error("Lỗi khi tải dữ liệu ban đầu:", error);
         toast.error("Lỗi khi tải dữ liệu tham chiếu");
       }
     };
-    loadData();
-  }, []);
+    loadInitialData();
+  }, []); // Chỉ chạy một lần khi mount
+
+  // Tải danh sách chức vụ khi departmentId thay đổi
+  React.useEffect(() => {
+    const loadPositions = async () => {
+      if (formData.departmentId) {
+        try {
+          const positionData = await fetchPositionsByDepartment(
+            formData.departmentId
+          );
+          setPositions(positionData || []);
+          if (positionData?.length) {
+            setFormData((prev) => ({
+              ...prev,
+              positionId: positionData[0].id,
+            }));
+          } else {
+            setFormData((prev) => ({ ...prev, positionId: "" }));
+          }
+        } catch (error) {
+          console.error("Lỗi khi tải danh sách chức vụ:", error);
+          toast.error("Lỗi khi tải danh sách chức vụ");
+        }
+      }
+    };
+    if (formData.departmentId) {
+      loadPositions(); // Chỉ chạy khi đã có departmentId
+    }
+  }, [formData.departmentId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,6 +127,7 @@ function AddEmployee() {
         dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
         joiningDate: new Date(formData.joiningDate).toISOString(),
       };
+      console.log("Dữ liệu gửi đi:", employeeData);
       await addEmployee(employeeData);
       toast.success("Thêm nhân viên thành công");
       navigate("/employees");
@@ -98,9 +141,10 @@ function AddEmployee() {
         employeeStatus: "WORKING",
         userId: users[0]?.id || "",
         positionId: positions[0]?.id || "",
-        // departmentId: departments[0]?.id || "",
+        departmentId: departments[0]?.id || "",
       });
     } catch (error) {
+      console.error("Lỗi khi thêm nhân viên:", error.response?.data);
       toast.error(
         "Lỗi khi thêm nhân viên: " +
           (error.response?.data?.message || "Lỗi không xác định")
@@ -225,21 +269,6 @@ function AddEmployee() {
             </Select>
           </FormControl>
           <FormControl fullWidth required>
-            <InputLabel>Chức vụ</InputLabel>
-            <Select
-              name="positionId"
-              value={formData.positionId}
-              onChange={handleChange}
-              label="Chức vụ"
-            >
-              {positions.map((pos) => (
-                <MenuItem key={pos.id} value={pos.id}>
-                  {pos.name || pos.id}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <FormControl fullWidth required>
             <InputLabel>Phòng ban</InputLabel>
             <Select
               name="departmentId"
@@ -253,7 +282,23 @@ function AddEmployee() {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl> */}
+          </FormControl>
+          <FormControl fullWidth required>
+            <InputLabel>Chức vụ</InputLabel>
+            <Select
+              name="positionId"
+              value={formData.positionId}
+              onChange={handleChange}
+              label="Chức vụ"
+              disabled={!formData.departmentId}
+            >
+              {positions.map((pos) => (
+                <MenuItem key={pos.id} value={pos.id}>
+                  {pos.name || pos.id}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Button
             type="submit"
             variant="contained"

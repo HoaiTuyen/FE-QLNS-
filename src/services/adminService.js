@@ -38,10 +38,13 @@ export const addEmployee = async (employeeData) => {
 };
 
 //Cập nhật thông tin nhân viên
-export const updateEmployee = async (employeeId, employeeData) => {
+export const updateEmployee = async (employeeData) => {
   try {
-    console.log("Dữ liệu nhân viên cập nhật:", employeeData);
-    const response = await axiosClient.put(`/employee/update`, employeeData);
+    console.log("Dữ liệu nhận được trong updateEmployee:", employeeData); // Log để kiểm tra
+    if (!employeeData) {
+      throw new Error("employeeData is undefined");
+    }
+    const response = await axiosClient.put(`/api/v1/employees/${employeeData.id}`, employeeData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật nhân viên:", error);
@@ -55,12 +58,32 @@ export const fetchUsers = async () => {
   return response.data;
 };
 
+export const fetchUsersNullEmpployee = async () => {
+  const response = await axiosClient.get("/user/user-nullemployee");
+  return response.data;
+};
+
 export const fetchPositions = async () => {
-  const response = await axiosClient.get("/position/list");
+  const response = await axiosClient.get(`/position/list`);
   return response.data;
 };
 
 export const fetchDepartments = async () => {
   const response = await axiosClient.get("/department/list");
   return response.data;
+};
+
+export const fetchPositionsByDepartment = async (departmentId) => {
+  try {
+    const response = await axiosClient.get(`/department/department-position/${departmentId}`);
+    if (response.data.positions) {
+      return response.data.positions; // Trả về mảng positions trực tiếp từ response.data
+    } else {
+      console.warn("Không tìm thấy positions trong response:", response.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chức vụ theo phòng ban:", error);
+    throw error;
+  }
 };
