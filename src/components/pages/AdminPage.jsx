@@ -60,15 +60,15 @@ const AdminPage = () => {
         {/* <Button variant="contained" onClick={() => navigate("/users")}>
           Quản lý Người dùng
         </Button> */}
-        {/* <Button variant="contained" onClick={() => navigate("/salarys")}>
+        {/* <Button variant="contained" onClick={() => navigate("/salaries")}>
           Quản lý Lương
         </Button> */}
-        {/* <Button variant="contained" onClick={() => navigate("/positions")}>
+        <Button variant="contained" onClick={() => navigate("/positions")}>
           Quản lý Chức vụ
-        </Button> */}
-        {/* <Button variant="contained" onClick={() => navigate("/departments")}>
+        </Button>
+        <Button variant="contained" onClick={() => navigate("/departments")}>
           Quản lý Phòng ban
-        </Button> */}
+        </Button>
         <Button variant="outlined" color="error" onClick={handleLogout}>
           Đăng xuất
         </Button>

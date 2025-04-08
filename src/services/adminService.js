@@ -83,16 +83,9 @@ export const fetchPositions = async () => {
   return response.data;
 };
 
-export const fetchDepartments = async () => {
-  const response = await axiosClient.get("/department/list");
-  return response.data;
-};
-
-export const fetchPositionsByDepartment = async (departmentId) => {
+export const fetchPositionsByDepartment = async (positionId) => {
   try {
-    const response = await axiosClient.get(
-      `/department/department-position/${departmentId}`
-    );
+    const response = await axiosClient.get(`/department/department-position/${positionId}`);
     if (response.data.positions) {
       return response.data.positions; // Trả về mảng positions trực tiếp từ response.data
     } else {
@@ -101,6 +94,97 @@ export const fetchPositionsByDepartment = async (departmentId) => {
     }
   } catch (error) {
     console.error("Lỗi khi lấy danh sách chức vụ theo phòng ban:", error);
+    throw error;
+  }
+};
+
+export const fetchDepartments = async () => {
+  const response = await axiosClient.get(`/department/list`);
+  return response.data;
+};
+
+export const fetchDepartmentsListByPage = async (page = 0, size = 10) => {
+  try {
+    const response = await axiosClient.get(`/department/listbypage?page=${page}&size=${size}`);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách phòng ban:", error.response?.data || error);
+    toast.error(`Lỗi tải danh sách: ${error.response?.data?.message || "Lỗi không xác định"}`);
+    return { data: [], error: error.response?.data || "Lỗi không xác định" };
+  }
+};
+
+export const addDepartment = async (departmentData) => {
+  try {
+    console.log("Dữ liệu gửi đi trong addDepartment:", departmentData);
+    const response = await axiosClient.post(`/department/add`, departmentData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm phòng ban:", error);
+    throw error;
+  }
+};
+
+export const updateDepartment = async (departmentData) => {
+  try {
+    console.log("Dữ liệu nhận được trong updateDepartment:", departmentData);
+    const response = await axiosClient.put(`/department/update/`, departmentData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật phòng ban:", error);
+    throw error;
+  }
+};
+
+export const deleteDepartment = async (id) => {
+  try {
+    const response = await axiosClient.delete(`/department/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa phòng ban:", error);
+    throw error;
+  }
+};
+
+export const fetchPositionsListByPage = async (page = 0, size = 10) => {
+  try {
+    const response = await axiosClient.get(`/position/listbypage?page=${page}&size=${size}`);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi lấy danh sách chức vụ:", error.response?.data || error);
+    toast.error(`Lỗi tải danh sách: ${error.response?.data?.message || "Lỗi không xác định"}`);
+    return { data: [], error: error.response?.data || "Lỗi không xác định" };
+  }
+};
+
+export const addPosition = async (positionData) => {
+  try {
+    console.log("Dữ liệu gửi đi trong addPosition:", positionData);
+    const response = await axiosClient.post(`/position/add`, positionData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi thêm phòng ban:", error);
+    throw error;
+  }
+};
+
+export const updatePosition = async (positionData) => {
+  try {
+    console.log("Dữ liệu nhận được trong updatePosition:", positionData);
+    const response = await axiosClient.put(`/position/update/`, positionData);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật chức vụ: ", error);
+    throw error;
+  }
+};
+
+export const deletePosition = async (id) => {
+  try {
+    const response = await axiosClient.delete(`/position/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa chức vụ:", error);
     throw error;
   }
 };
