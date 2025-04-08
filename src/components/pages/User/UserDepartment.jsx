@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Descriptions, Spin } from "antd";
 import { toast } from "react-toastify";
-import { getEmployeeById } from "../../services/userService"; // Giả sử bạn có hàm này trong userService.js
-import EmptyDataFallback from "../common/EmptyDataFallback";
+import { getEmployeeById } from "../../../services/userService"; // Giả sử bạn có hàm này trong userService.js
+import EmptyDataFallback from "../../common/EmptyDataFallback";
 const UserDepartment = () => {
   const [loading, setLoading] = useState(true);
   const [position, setPosition] = useState(null);

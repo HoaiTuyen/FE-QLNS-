@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Empty, Table } from "antd";
-import { getSalary, getEmployeeById } from "../../services/userService";
+import { getSalary, getEmployeeById } from "../../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 

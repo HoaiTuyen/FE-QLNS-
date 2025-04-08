@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Descriptions, Empty, Spin } from "antd";
-import { getEmployeeById, getDetailUser } from "../../services/userService";
+import { getEmployeeById, getDetailUser } from "../../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
-import EmptyDataFallback from "../common/EmptyDataFallback";
+import EmptyDataFallback from "../../common/EmptyDataFallback";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -15,6 +15,8 @@ const UserProfile = () => {
     const fetchProfile = async () => {
       try {
         const userDetail = await getDetailUser(user.email);
+        console.log(userDetail);
+
         const res = await getEmployeeById(userDetail.data.employee.id);
         console.log(res);
 

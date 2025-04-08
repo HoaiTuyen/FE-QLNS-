@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Input, Button } from "antd";
 import { toast } from "react-toastify";
-import { changePassword } from "../../services/userService";
+import { changePassword } from "../../../services/userService";
 
 const UserChangePassword = () => {
   const [form] = Form.useForm();

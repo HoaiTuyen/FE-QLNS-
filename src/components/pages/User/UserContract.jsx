@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spin } from "antd";
-import { getContract, getDetailUser } from "../../services/userService";
+import { getContract, getDetailUser } from "../../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
-import EmptyDataFallback from "../common/EmptyDataFallback";
+import EmptyDataFallback from "../../common/EmptyDataFallback";
 
 const UserContract = () => {
   const [contracts, setContracts] = useState([]);
