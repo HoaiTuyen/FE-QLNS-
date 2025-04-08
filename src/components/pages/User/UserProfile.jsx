@@ -15,8 +15,6 @@ const UserProfile = () => {
     const fetchProfile = async () => {
       try {
         const userDetail = await getDetailUser(user.email);
-        console.log(userDetail);
-
         const res = await getEmployeeById(userDetail.data.employee.id);
         console.log(res);
 
