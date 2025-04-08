@@ -175,6 +175,7 @@ function Departments() {
             variant="contained"
             onClick={() => setPage(0)}
             sx={{ minWidth: "120px" }}
+            disabled={page === 0}
           >
             Trang đầu
           </Button>

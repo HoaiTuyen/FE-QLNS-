@@ -26,6 +26,8 @@ const PrivateRoute = ({ children, allowedTypes }) => {
     }
   }, [isLoggedIn, isAllowed]);
   if (!isLoggedIn) return <Navigate to="/" />;
+  // else if (user.type === "ADMIN") return <Navigate to="/admin" />;
+  // else if (user.type === "USER") return <Navigate to="/user" />;
   if (!isAllowed) {
     return (
       <div style={{ padding: 40, textAlign: "center" }}>
