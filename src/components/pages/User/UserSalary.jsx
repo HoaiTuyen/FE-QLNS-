@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Empty, Table } from "antd";
-import { getSalary, getEmployeeById } from "../../services/userService";
+import { getSalary, getEmployeeById } from "../../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
@@ -34,12 +34,7 @@ const UserSalary = () => {
           toast.error("Không có dữ liệu lương.");
         }
       } catch (err) {
-        if (err.response?.status === 404) {
-          toast.error("Không có thông tin lương");
-        } else {
-          console.error("Lỗi khi lấy lương:", err);
-          toast.error("Có lỗi xảy ra khi lấy thông tin lương.");
-        }
+        toast.error(err);
       } finally {
         setLoading(false);
       }

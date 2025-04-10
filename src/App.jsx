@@ -17,7 +17,8 @@ import { useEffect } from "react";
 
 const PrivateRoute = ({ children, allowedTypes }) => {
   const user = getCurrentUser();
-  const isLoggedIn = !!user;
+  let isLoggedIn = !!user;
+
   const isAllowed = user && allowedTypes.includes(user.type);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const PrivateRoute = ({ children, allowedTypes }) => {
       toast.error("Bạn không có quyền truy cập trang này");
     }
   }, [isLoggedIn, isAllowed]);
+
   if (!isLoggedIn) return <Navigate to="/" />;
   // else if (user.type === "ADMIN") return <Navigate to="/admin" />;
   // else if (user.type === "USER") return <Navigate to="/user" />;
@@ -39,14 +41,24 @@ const PrivateRoute = ({ children, allowedTypes }) => {
 
   return children;
 };
+const HomePage = () => {
+  const user = getCurrentUser();
+  if (!user) {
+    return <Login />;
+  } else if (user.type === "ADMIN") {
+    return <Navigate to="/admin" />;
+  } else if (user.type === "USER") {
+    return <Navigate to="/user" />;
+  } else {
+    return <Login />;
+  }
+};
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-
-          {/* Admin Page */}
+          <Route path="/" element={<HomePage />} />
 
           <Route
             path="/admin"
@@ -130,13 +142,13 @@ function App() {
           />
 
           {/* <Route
-            path="/positions/update"
-            element={
-              <PrivateRoute allowedTypes={["ADMIN"]}>
-                <DepartmentUpdateForm />
-              </PrivateRoute>
-            }
-          /> */}
+              path="/positions/update"
+              element={
+                <PrivateRoute allowedTypes={["ADMIN"]}>
+                  <DepartmentUpdateForm />
+                </PrivateRoute>
+              }
+            /> */}
 
           {/* UserPage */}
 

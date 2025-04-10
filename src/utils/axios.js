@@ -27,7 +27,10 @@ axiosClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
     // Gợi ý: Bạn có thể xử lý lỗi chung ở đây
-    console.error("Phản hồi lỗi từ server:", error.response?.data || error.message);
+    console.error(
+      "Phản hồi lỗi từ server:",
+      error.response?.data || error.message
+    );
     return Promise.reject(error);
   }
 );

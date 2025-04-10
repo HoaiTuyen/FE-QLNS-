@@ -2,19 +2,28 @@ import axiosClient from "../utils/axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Hàm lấy danh sách nhân viên theo trang  
+// Hàm lấy danh sách nhân viên theo trang
 export const fetchEmployees = async (page = 0, size = 10) => {
   try {
-    const response = await axiosClient.get(`/employee/listbypage?page=${page}&size=${size}`);
+    const response = await axiosClient.get(
+      `/employee/listbypage?page=${page}&size=${size}`
+    );
     return response.data;
   } catch (error) {
-    console.error("❌ Lỗi khi lấy danh sách nhân viên:", error.response?.data || error);
-    toast.error(`Lỗi tải danh sách: ${error.response?.data?.message || "Lỗi không xác định"}`);
+    console.error(
+      "❌ Lỗi khi lấy danh sách nhân viên:",
+      error.response?.data || error
+    );
+    toast.error(
+      `Lỗi tải danh sách: ${
+        error.response?.data?.message || "Lỗi không xác định"
+      }`
+    );
     return { data: [], error: error.response?.data || "Lỗi không xác định" };
   }
 };
 
-// Hàm xóa nhân viên theo ID  
+// Hàm xóa nhân viên theo ID
 export const deleteEmployee = async (employeeId) => {
   try {
     await axiosClient.delete(`/employee/delete/${employeeId}`);
@@ -32,7 +41,10 @@ export const addEmployee = async (employeeData) => {
     const response = await axiosClient.post("/employee/add", employeeData);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi thêm nhân viên:", error.response?.data || error.message);
+    console.error(
+      "Lỗi khi thêm nhân viên:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -44,7 +56,10 @@ export const updateEmployee = async (employeeData) => {
     if (!employeeData) {
       throw new Error("employeeData is undefined");
     }
-    const response = await axiosClient.put(`/api/v1/employees/${employeeData.id}`, employeeData);
+    const response = await axiosClient.put(
+      `/employees/${employeeData.id}`,
+      employeeData
+    );
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật nhân viên:", error);

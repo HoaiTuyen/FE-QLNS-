@@ -12,3 +12,6 @@ export const getContract = async (userId) => {
 export const changePassword = async (dataBody) => {
   return await axiosClient.post(`/auth/change-password`, dataBody);
 };
+export const getDetailUser = async (email) => {
+  return await axiosClient.post(`/employee/user-detail?email=${email}`);
+};

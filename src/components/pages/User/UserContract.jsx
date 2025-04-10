@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spin } from "antd";
-import { getContract, getEmployeeById } from "../../services/userService";
+import { getContract, getDetailUser } from "../../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
-import EmptyDataFallback from "../common/EmptyDataFallback";
+import EmptyDataFallback from "../../common/EmptyDataFallback";
 
 const UserContract = () => {
   const [contracts, setContracts] = useState([]);
@@ -13,10 +13,10 @@ const UserContract = () => {
   useEffect(() => {
     const fetchContracts = async () => {
       try {
-        const employeeRes = await getEmployeeById(user.id);
+        const employeeRes = await getDetailUser(user.email);
 
-        if (employeeRes?.data?.id) {
-          const employeeId = employeeRes.data.id;
+        if (employeeRes?.data?.employee?.id) {
+          const employeeId = employeeRes.data.employee.id;
           const contractRes = await getContract(employeeId);
           const contractList = contractRes.data?.contracts || [];
 
@@ -26,12 +26,7 @@ const UserContract = () => {
           toast.error("Không tìm thấy hợp đồng nhân viên.");
         }
       } catch (err) {
-        if (err.response?.status === 404) {
-          toast.error("Không có thông tin hợp đồng");
-        } else {
-          console.error("Lỗi khi lấy hợp đồng:", err);
-          toast.error("Lỗi khi lấy danh sách hợp đồng.");
-        }
+        toast.error(err);
       } finally {
         setLoading(false);
       }

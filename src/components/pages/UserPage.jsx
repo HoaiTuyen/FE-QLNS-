@@ -11,11 +11,11 @@ import {
 import { logout } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import UserSalary from "../User/UserSalary";
-import UserProfile from "../User/UserProfile";
-import UserContract from "../User/UserContract";
-import UserChangePassword from "../User/UserChangePassword";
-import UserDepartment from "../User/UserDepartment";
+import UserSalary from "../pages/User/UserSalary";
+import UserProfile from "../pages/User/UserProfile";
+import UserContract from "../pages/User/UserContract";
+import UserChangePassword from "../pages/User/UserChangePassword";
+import UserDepartment from "../pages/User/UserDepartment";
 
 const { Header, Sider, Content } = Layout;
 
