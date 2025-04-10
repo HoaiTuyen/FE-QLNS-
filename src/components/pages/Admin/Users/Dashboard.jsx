@@ -17,13 +17,13 @@ import {
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import {
-  deletePosition,
-  fetchPositionsListByPage,
+  deleteUser,
+  fetchUsersListByPage,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
 
-function Positions() {
-  const [positions, setPositions] = useState([]);
+function Users() {
+  const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -33,37 +33,37 @@ function Positions() {
   const pageSize = 6;
   const toggleDrawer = () => setOpen(!open);
 
-  const loadPositions = useCallback(async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchPositionsListByPage(page, pageSize);
-      setPositions(data.positions);
+      const data = await fetchUsersListByPage(page, pageSize);
+      setUsers(data.users);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Lỗi khi tải danh sách phòng ban:", error);
-      toast.error("Lỗi khi tải danh sách phòng ban");
+      console.error("Lỗi khi tải danh sách người dùng", error);
+      toast.error("Lỗi khi tải danh sách người dùng");
     } finally {
       setLoading(false);
     }
   }, [page, pageSize]);
 
   useEffect(() => {
-    loadPositions();
-  }, [page, loadPositions]);
+    loadUsers();
+  }, [page, loadUsers]);
 
-  const handleEdit = (position) => {
-    navigate("/position/edit", { state: { position } });
+  const handleEdit = (user) => {
+    navigate("/users/edit", { state: { user } });
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa chức vụ này?")) {
+    if (window.confirm("Bạn có chắc muốn xóa người dùng này?")) {
       try {
-        await deletePosition(id);
-        loadPositions(); // Tải lại danh sách sau khi xóa
-        toast.success("Xóa chức vụ thành công");
+        await deleteUser(id);
+        loadUsers(); // Tải lại danh sách sau khi xóa
+        toast.success("Xóa người dùng thành công");
       } catch (error) {
         toast.error(
-          "Lỗi khi xóa chức vụ : " + (error.message || "Lỗi không xác định")
+          "Lỗi khi xóa người dùng: " + (error.message || "Lỗi không xác định")
         );
       }
     }
@@ -79,10 +79,10 @@ function Positions() {
 
   const handleSearch = () => {
     setPage(0);
-    loadPositions();
+    loadUsers();
   };
 
-  console.log("Positions:", positions); // Log để kiểm tra dữ liệu;
+  //console.log("Users:", users); // Log để kiểm tra dữ liệu;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -99,18 +99,18 @@ function Positions() {
         }}
       >
         <Typography variant="h4" align="center" gutterBottom>
-          Quản Lý Chức Vụ
+          Quản Lý Người Dùng
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/positions/create")}
+            onClick={() => navigate("/users/create")}
           >
-            Thêm Chức Vụ
+            Thêm Người Dùng
           </Button>
           <TextField
-            label="Tìm kiếm chức vụ"
+            label="Tìm kiếm người dùng"
             value={searchQuery}
             variant="outlined"
             size="small"
@@ -128,24 +128,30 @@ function Positions() {
               <TableHead>
                 <TableRow>
                   <TableCell>ID</TableCell>
-                  <TableCell>Tên</TableCell>
-                  <TableCell>Mô tả</TableCell>
+                  <TableCell> Tên người dùng</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Loại tài khoản</TableCell>
+                  <TableCell>Trạng thái</TableCell>
                   <TableCell>Hành động</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {positions
-                  .filter((pos) => pos.name.toLowerCase().includes(searchQuery))
-                  .map((pos) => (
-                    <TableRow key={pos.id}>
-                      <TableCell>{pos.id}</TableCell>
-                      <TableCell>{pos.name}</TableCell>
-                      <TableCell>{pos.description}</TableCell>
+                {users
+                  .filter((us) =>
+                    us.username.toLowerCase().includes(searchQuery)
+                  )
+                  .map((us) => (
+                    <TableRow key={us.id}>
+                      <TableCell>{us.id}</TableCell>
+                      <TableCell>{us.username}</TableCell>
+                      <TableCell>{us.email}</TableCell>
+                      <TableCell>{us.type}</TableCell>
+                      <TableCell>{us.status}</TableCell>
                       <TableCell>
                         <Button
                           variant="contained"
                           color="primary"
-                          onClick={() => handleEdit(pos)}
+                          onClick={() => handleEdit(us)}
                           sx={{ mr: 1 }}
                         >
                           Sửa
@@ -153,7 +159,7 @@ function Positions() {
                         <Button
                           variant="contained"
                           color="error"
-                          onClick={() => handleDelete(pos.id)}
+                          onClick={() => handleDelete(us.id)}
                         >
                           Xóa
                         </Button>
@@ -204,4 +210,4 @@ function Positions() {
   );
 }
 
-export default Positions;
+export default Users;

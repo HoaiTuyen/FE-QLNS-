@@ -17,13 +17,13 @@ import {
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import {
-  deletePosition,
-  fetchPositionsListByPage,
+  deleteContract,
+  fetchContractsListByPage,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
 
-function Positions() {
-  const [positions, setPositions] = useState([]);
+function Contracts() {
+  const [contracts, setContracts] = useState([]);
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -33,40 +33,44 @@ function Positions() {
   const pageSize = 6;
   const toggleDrawer = () => setOpen(!open);
 
-  const loadPositions = useCallback(async () => {
+  const loadContracts = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchPositionsListByPage(page, pageSize);
-      setPositions(data.positions);
+      const data = await fetchContractsListByPage(page, pageSize);
+      setContracts(data.contracts);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Lỗi khi tải danh sách phòng ban:", error);
-      toast.error("Lỗi khi tải danh sách phòng ban");
+      console.error("Lỗi khi tải danh sách hợp đồng:", error);
+      toast.error("Lỗi khi tải danh sách hợp đồng");
     } finally {
       setLoading(false);
     }
   }, [page, pageSize]);
 
   useEffect(() => {
-    loadPositions();
-  }, [page, loadPositions]);
+    loadContracts();
+  }, [page, loadContracts]);
 
-  const handleEdit = (position) => {
-    navigate("/position/edit", { state: { position } });
+  const handleEdit = (contract) => {
+    navigate("/contracts/edit", { state: { contract } });
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa chức vụ này?")) {
+    if (window.confirm("Bạn có chắc muốn xóa hợp đồng này?")) {
       try {
-        await deletePosition(id);
-        loadPositions(); // Tải lại danh sách sau khi xóa
-        toast.success("Xóa chức vụ thành công");
+        await deleteContract(id);
+        loadContracts(); // Tải lại danh sách sau khi xóa
+        toast.success("Xóa hợp đồng thành công");
       } catch (error) {
         toast.error(
-          "Lỗi khi xóa chức vụ : " + (error.message || "Lỗi không xác định")
+          "Lỗi khi xóa hợp đồng: " + (error.message || "Lỗi không xác định")
         );
       }
     }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("vi-VN");
   };
 
   const handlePreviousPage = () => {
@@ -79,10 +83,10 @@ function Positions() {
 
   const handleSearch = () => {
     setPage(0);
-    loadPositions();
+    loadContracts();
   };
 
-  console.log("Positions:", positions); // Log để kiểm tra dữ liệu;
+  //console.log("Contracts:", contracts); // Log để kiểm tra dữ liệu;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -99,18 +103,18 @@ function Positions() {
         }}
       >
         <Typography variant="h4" align="center" gutterBottom>
-          Quản Lý Chức Vụ
+          Quản Lý Hợp Đồng
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/positions/create")}
+            onClick={() => navigate("/contracts/create")}
           >
-            Thêm Chức Vụ
+            Thêm Hợp Đồng
           </Button>
           <TextField
-            label="Tìm kiếm chức vụ"
+            label="Tìm kiếm hợp đồng"
             value={searchQuery}
             variant="outlined"
             size="small"
@@ -128,24 +132,32 @@ function Positions() {
               <TableHead>
                 <TableRow>
                   <TableCell>ID</TableCell>
-                  <TableCell>Tên</TableCell>
-                  <TableCell>Mô tả</TableCell>
+                  <TableCell>Loại hợp đồng</TableCell>
+                  <TableCell>Ngày bắt đầu</TableCell>
+                  <TableCell>Ngày kết thúc</TableCell>
+                  <TableCell>Ghi chú</TableCell>
                   <TableCell>Hành động</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {positions
-                  .filter((pos) => pos.name.toLowerCase().includes(searchQuery))
-                  .map((pos) => (
-                    <TableRow key={pos.id}>
-                      <TableCell>{pos.id}</TableCell>
-                      <TableCell>{pos.name}</TableCell>
-                      <TableCell>{pos.description}</TableCell>
+                {contracts
+                  .filter((cont) =>
+                    cont.contractType.toLowerCase().includes(searchQuery)
+                  )
+                  .map((cont) => (
+                    <TableRow key={cont.id}>
+                      <TableCell>{cont.id}</TableCell>
+                      <TableCell>{cont.contractType}</TableCell>
+                      <TableCell>{formatDate(cont.startDate)}</TableCell>
+                      <TableCell>{formatDate(cont.endDate)}</TableCell>
+                      <TableCell>
+                        {cont.notes ? cont.notes : "Không có ghi chú"}
+                      </TableCell>
                       <TableCell>
                         <Button
                           variant="contained"
                           color="primary"
-                          onClick={() => handleEdit(pos)}
+                          onClick={() => handleEdit(cont)}
                           sx={{ mr: 1 }}
                         >
                           Sửa
@@ -153,7 +165,7 @@ function Positions() {
                         <Button
                           variant="contained"
                           color="error"
-                          onClick={() => handleDelete(pos.id)}
+                          onClick={() => handleDelete(cont.id)}
                         >
                           Xóa
                         </Button>
@@ -204,4 +216,4 @@ function Positions() {
   );
 }
 
-export default Positions;
+export default Contracts;

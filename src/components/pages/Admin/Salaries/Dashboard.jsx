@@ -17,13 +17,13 @@ import {
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import {
-  deletePosition,
-  fetchPositionsListByPage,
+  deleteSalary,
+  fetchSalariesListByPage,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
 
-function Positions() {
-  const [positions, setPositions] = useState([]);
+function Salaries() {
+  const [salaries, setSalaries] = useState([]);
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -33,40 +33,44 @@ function Positions() {
   const pageSize = 6;
   const toggleDrawer = () => setOpen(!open);
 
-  const loadPositions = useCallback(async () => {
+  const loadSalaries = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchPositionsListByPage(page, pageSize);
-      setPositions(data.positions);
+      const data = await fetchSalariesListByPage(page, pageSize);
+      setSalaries(data.salaries);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error("Lỗi khi tải danh sách phòng ban:", error);
-      toast.error("Lỗi khi tải danh sách phòng ban");
+      console.error("Lỗi khi tải danh sách bảng lương:", error);
+      toast.error("Lỗi khi tải danh sách bảng lương");
     } finally {
       setLoading(false);
     }
   }, [page, pageSize]);
 
   useEffect(() => {
-    loadPositions();
-  }, [page, loadPositions]);
+    loadSalaries();
+  }, [page, loadSalaries]);
 
-  const handleEdit = (position) => {
-    navigate("/position/edit", { state: { position } });
+  const handleEdit = (salary) => {
+    navigate("/salaries/edit", { state: { salary } });
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc muốn xóa chức vụ này?")) {
+    if (window.confirm("Bạn có chắc muốn xóa bảng lương này?")) {
       try {
-        await deletePosition(id);
-        loadPositions(); // Tải lại danh sách sau khi xóa
-        toast.success("Xóa chức vụ thành công");
+        await deleteSalary(id);
+        loadSalaries(); // Tải lại danh sách sau khi xóa
+        toast.success("Xóa bảng lương thành công");
       } catch (error) {
         toast.error(
-          "Lỗi khi xóa chức vụ : " + (error.message || "Lỗi không xác định")
+          "Lỗi khi xóa bảng lương: " + (error.message || "Lỗi không xác định")
         );
       }
     }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("vi-VN");
   };
 
   const handlePreviousPage = () => {
@@ -79,10 +83,10 @@ function Positions() {
 
   const handleSearch = () => {
     setPage(0);
-    loadPositions();
+    loadSalaries();
   };
 
-  console.log("Positions:", positions); // Log để kiểm tra dữ liệu;
+  //console.log("Salaries:", salaries); // Log để kiểm tra dữ liệu;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -99,18 +103,18 @@ function Positions() {
         }}
       >
         <Typography variant="h4" align="center" gutterBottom>
-          Quản Lý Chức Vụ
+          Quản Lý Bảng Lương
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/positions/create")}
+            onClick={() => navigate("/salaries/create")}
           >
-            Thêm Chức Vụ
+            Thêm Bảng Lương
           </Button>
           <TextField
-            label="Tìm kiếm chức vụ"
+            label="Tìm kiếm bảng lương"
             value={searchQuery}
             variant="outlined"
             size="small"
@@ -129,23 +133,31 @@ function Positions() {
                 <TableRow>
                   <TableCell>ID</TableCell>
                   <TableCell>Tên</TableCell>
-                  <TableCell>Mô tả</TableCell>
+                  <TableCell>Lương cơ bản</TableCell>
+                  <TableCell>Tỉ lệ phụ cấp</TableCell>
+                  <TableCell>Tổng lương</TableCell>
+                  <TableCell>Ngày có hiệu lực</TableCell>
                   <TableCell>Hành động</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {positions
-                  .filter((pos) => pos.name.toLowerCase().includes(searchQuery))
-                  .map((pos) => (
-                    <TableRow key={pos.id}>
-                      <TableCell>{pos.id}</TableCell>
-                      <TableCell>{pos.name}</TableCell>
-                      <TableCell>{pos.description}</TableCell>
+                {salaries
+                  .filter((sal) => sal.name.toLowerCase().includes(searchQuery))
+                  .map((sal) => (
+                    <TableRow key={sal.id}>
+                      <TableCell>{sal.id}</TableCell>
+                      <TableCell>{sal.name}</TableCell>
+                      <TableCell>{sal.basicSalary}</TableCell>
+                      <TableCell>{sal.allowance}</TableCell>
+                      <TableCell>
+                        {sal.basicSalary + sal.basicSalary * sal.allowance}
+                      </TableCell>
+                      <TableCell>{formatDate(sal.effectiveDate)}</TableCell>
                       <TableCell>
                         <Button
                           variant="contained"
                           color="primary"
-                          onClick={() => handleEdit(pos)}
+                          onClick={() => handleEdit(sal)}
                           sx={{ mr: 1 }}
                         >
                           Sửa
@@ -153,7 +165,7 @@ function Positions() {
                         <Button
                           variant="contained"
                           color="error"
-                          onClick={() => handleDelete(pos.id)}
+                          onClick={() => handleDelete(sal.id)}
                         >
                           Xóa
                         </Button>
@@ -204,4 +216,4 @@ function Positions() {
   );
 }
 
-export default Positions;
+export default Salaries;

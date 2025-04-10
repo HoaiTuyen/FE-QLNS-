@@ -60,9 +60,9 @@ const AdminPage = () => {
         {/* <Button variant="contained" onClick={() => navigate("/users")}>
           Quản lý Người dùng
         </Button> */}
-        {/* <Button variant="contained" onClick={() => navigate("/salaries")}>
+        <Button variant="contained" onClick={() => navigate("/salaries")}>
           Quản lý Lương
-        </Button> */}
+        </Button>
         {/* <Button variant="contained" onClick={() => navigate("/contracts")}>
           Quản lý Hợp đồng
         </Button> */}

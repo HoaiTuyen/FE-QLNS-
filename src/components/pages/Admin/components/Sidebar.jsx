@@ -30,9 +30,9 @@ function Sidebar({ open }) {
     { text: "Quản lý chức vụ", icon: <WorkIcon />, navigate: "/positions" },
     { text: "Quản lý lương", icon: <MoneyIcon />, navigate: "/salaries" },
     {
-      text: "Quản lý tài khoản",
+      text: "Quản lý người dùng",
       icon: <AccountIcon />,
-      navigate: "/accounts",
+      navigate: "/users",
     },
     {
       text: "Quản lý hợp đồng",
