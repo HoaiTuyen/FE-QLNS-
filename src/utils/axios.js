@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosClient = axios.create({
   baseURL:
     import.meta.env.VITE_BACKEND_URL ||
-    "http://103.112.211.252:8080/api/v1",
+    "https://backend-service-dch2hyfvavfecjea.southeastasia-01.azurewebsites.net/api/v1",
 });
 
 axiosClient.interceptors.request.use((config) => {
