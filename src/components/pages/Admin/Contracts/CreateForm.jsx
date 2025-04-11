@@ -109,14 +109,20 @@ function AddContract() {
           onSubmit={handleSubmit}
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          <TextField
-            label="Loại hợp đồng"
-            name="name"
-            //value={formData.contractType}
-            onChange={handleChange}
-            fullWidth
-            required
-          />
+          <FormControl fullWidth required>
+            <InputLabel>Loại hợp đồng</InputLabel>
+            <Select
+              name="contractType"
+              value={formData.contractType}
+              onChange={handleChange}
+              label="Loại hợp đồng"
+            >
+              <MenuItem value="OFFICIAL">Chính thức</MenuItem>
+              <MenuItem value="PROBATION">Thử việc</MenuItem>
+              <MenuItem value="INTERN">Thực tập</MenuItem>
+              <MenuItem value="PART_TIME">Thời vụ</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             label="Ngày bắt đầu"
             name="startDate"
@@ -135,6 +141,17 @@ function AddContract() {
             onChange={handleChange}
             fullWidth
             InputLabelProps={{ shrink: true }}
+            required
+          />
+          <TextField
+            label="Ghi chú"
+            name="notes"
+            value={formData.notes}
+            onChange={handleChange}
+            fullWidth
+            multiline
+            rows={4}
+            placeholder="Nhập ghi chú"
             required
           />
           <FormControl fullWidth required>

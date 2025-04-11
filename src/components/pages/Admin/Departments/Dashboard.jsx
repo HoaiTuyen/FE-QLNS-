@@ -51,10 +51,6 @@ function Departments() {
     loadDepartments();
   }, [page, loadDepartments]);
 
-  const handleEdit = (department) => {
-    navigate("/departments/edit", { state: { department } });
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa phòng ban này?")) {
       try {
@@ -67,6 +63,11 @@ function Departments() {
         );
       }
     }
+  };
+
+  const handleEdit = (department) => {
+    console.log("Department gửi đi:", department); // Log để kiểm tra
+    navigate("/departments/update", { state: { department } });
   };
 
   const handlePreviousPage = () => {

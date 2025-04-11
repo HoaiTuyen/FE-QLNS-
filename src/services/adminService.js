@@ -2,7 +2,8 @@ import axiosClient from "../utils/axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Hàm lấy danh sách nhân viên theo trang
+//Các hàm xử lý nhân viên
+
 export const fetchEmployees = async (page = 0, size = 10) => {
   try {
     const response = await axiosClient.get(
@@ -23,7 +24,17 @@ export const fetchEmployees = async (page = 0, size = 10) => {
   }
 };
 
-// Hàm xóa nhân viên theo ID
+export const fetchEmployeeById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/employee/${id}`);
+    console.log("Dữ liệu từ fetchEmployeeById:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết nhân viên:", error);
+    throw error;
+  }
+};
+
 export const deleteEmployee = async (employeeId) => {
   try {
     await axiosClient.delete(`/employee/delete/${employeeId}`);
@@ -34,7 +45,6 @@ export const deleteEmployee = async (employeeId) => {
   }
 };
 
-// Thêm nhân viên mới
 export const addEmployee = async (employeeData) => {
   try {
     //console.log("Dữ liệu gửi tới API:", employeeData);
@@ -49,17 +59,10 @@ export const addEmployee = async (employeeData) => {
   }
 };
 
-//Cập nhật thông tin nhân viên
 export const updateEmployee = async (employeeData) => {
   try {
-    //console.log("Dữ liệu nhận được trong updateEmployee:", employeeData); // Log để kiểm tra
-    if (!employeeData) {
-      throw new Error("employeeData is undefined");
-    }
-    const response = await axiosClient.put(
-      `/employees/${employeeData.id}`,
-      employeeData
-    );
+    console.log("Dữ liệu gửi đi trong updateEmployee:", employeeData);
+    const response = await axiosClient.put(`/employee/update`, employeeData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật nhân viên:", error);
@@ -67,31 +70,12 @@ export const updateEmployee = async (employeeData) => {
   }
 };
 
-
-export const fetchUsersNullEmpployee = async () => {
+export const fetchUsersNullEmployee = async () => {
   const response = await axiosClient.get("/user/user-nullemployee");
   return response.data;
 };
 
-export const fetchPositions = async () => {
-  const response = await axiosClient.get(`/position/list`);
-  return response.data;
-};
-
-export const fetchPositionsByDepartment = async (positionId) => {
-  try {
-    const response = await axiosClient.get(`/department/department-position/${positionId}`);
-    if (response.data.positions) {
-      return response.data.positions; // Trả về mảng positions trực tiếp từ response.data
-    } else {
-      console.warn("Không tìm thấy positions trong response:", response.data);
-      return [];
-    }
-  } catch (error) {
-    console.error("Lỗi khi lấy danh sách chức vụ theo phòng ban:", error);
-    throw error;
-  }
-};
+// Các hàm xử lý phòng ban
 
 export const fetchDepartments = async () => {
   const response = await axiosClient.get(`/department/list`);
@@ -109,6 +93,17 @@ export const fetchDepartmentsListByPage = async (page = 0, size = 10) => {
   }
 };
 
+export const fetchDepartmentById = async (id) => {
+  try {
+    const response = await axiosClient.get(`department/${id}`);
+    //console.log("Dữ liệu từ fetchDepartmentById:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết phòng ban:", error);
+    throw error;
+  }
+};
+
 export const addDepartment = async (departmentData) => {
   try {
     //console.log("Dữ liệu gửi đi trong addDepartment:", departmentData);
@@ -123,7 +118,7 @@ export const addDepartment = async (departmentData) => {
 export const updateDepartment = async (departmentData) => {
   try {
     //console.log("Dữ liệu nhận được trong updateDepartment:", departmentData);
-    const response = await axiosClient.put(`/department/update/`, departmentData);
+    const response = await axiosClient.put(`/department/update`, departmentData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật phòng ban:", error);
@@ -137,6 +132,38 @@ export const deleteDepartment = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Lỗi khi xóa phòng ban:", error);
+    throw error;
+  }
+};
+
+// Các hàm xử lý chức vụ
+
+export const fetchPositions = async () => {
+  const response = await axiosClient.get(`/position/list`);
+  return response.data;
+};
+
+export const fetchPositionById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/position/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết chức vụ:", error);
+    throw error;
+  }
+};
+
+export const fetchPositionsByDepartment = async (positionId) => {
+  try {
+    const response = await axiosClient.get(`/department/department-position/${positionId}`);
+    if (response.data.positions) {
+      return response.data.positions; // Trả về mảng positions trực tiếp từ response.data
+    } else {
+      console.warn("Không tìm thấy positions trong response:", response.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chức vụ theo phòng ban:", error);
     throw error;
   }
 };
@@ -166,7 +193,7 @@ export const addPosition = async (positionData) => {
 export const updatePosition = async (positionData) => {
   try {
     //console.log("Dữ liệu nhận được trong updatePosition:", positionData);
-    const response = await axiosClient.put(`/position/update/`, positionData);
+    const response = await axiosClient.put(`/position/update`, positionData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật chức vụ: ", error);
@@ -183,6 +210,8 @@ export const deletePosition = async (id) => {
     throw error;
   }
 };
+
+// Các hàm xử lý bảng lương
 
 export const fetchSalaries = async () => {
   const response = await axiosClient.get(`/salary/list`);
@@ -232,9 +261,22 @@ export const deleteSalary = async (id) => {
   }
 };
 
+// Các hàm xử lý người dùng
+
 export const fetchUsers = async () => {
   const response = await axiosClient.get("/user/list");
   return response.data;
+};
+
+export const fetchUserById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/users/${id}`);
+    console.log("Dữ liệu từ fetchUserById:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết user:", error);
+    throw error;
+  }
 };
 
 export const fetchUsersListByPage = async (page = 0, size = 10) => {
@@ -279,6 +321,8 @@ export const deleteUser = async (id) => {
     throw error;
   }
 };
+
+// Các hàm xử lý hợp đồng
 
 export const fetchContracts= async () => {
   const response = await axiosClient.get("/contract/list");

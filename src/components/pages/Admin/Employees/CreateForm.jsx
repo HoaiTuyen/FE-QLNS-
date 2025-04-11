@@ -14,7 +14,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import {
   addEmployee,
-  fetchUsers,
+  fetchUsersNullEmployee,
   fetchDepartments,
   fetchPositionsByDepartment,
 } from "../../../../services/adminService";
@@ -48,7 +48,7 @@ function AddEmployee() {
     const loadInitialData = async () => {
       try {
         const [userData, departmentData] = await Promise.all([
-          fetchUsers(),
+          fetchUsersNullEmployee(),
           fetchDepartments(),
         ]);
         setUsers(userData || []);

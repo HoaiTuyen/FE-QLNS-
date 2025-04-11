@@ -1,37 +1,52 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import { updateDepartment } from "../../../../services/adminService";
+import {
+  fetchDepartmentById,
+  updateDepartment,
+} from "../../../../services/adminService";
 import { toast } from "react-toastify";
 
 function UpdateDepartment() {
-  const [open, setOpen] = React.useState(true);
-  const [formData, setFormData] = React.useState({
+  const [open, setOpen] = useState(true);
+  const [formData, setFormData] = useState({
     id: "",
     name: "",
     description: "",
   });
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const department = location.state?.department;
+  const department = location.state?.department; // Nhận department từ state (danh sách)
 
   const toggleDrawer = () => setOpen(!open);
 
-  React.useEffect(() => {
-    if (department) {
-      setFormData({
-        id: department.id || "",
-        name: department.name || "",
-        description: department.description || "",
-      });
-    } else {
-      console.log("Không nhận được dữ liệu department từ state");
-    }
-  }, [department]);
+  // Fetch dữ liệu phòng ban khi component mount
+  useEffect(() => {
+    const loadDepartment = async () => {
+      if (department?.id) {
+        try {
+          const data = await fetchDepartmentById(department.id);
+          setFormData({
+            id: data.id || department.id,
+            name: data.name || "",
+            description: data.description || "",
+          });
+        } catch (error) {
+          console.error("Lỗi khi tải dữ liệu phòng ban:", error);
+          toast.error("Lỗi khi tải dữ liệu phòng ban");
+        }
+      } else {
+        console.log("Không nhận được id phòng ban từ state");
+        toast.error("Không tìm thấy phòng ban để cập nhật");
+        navigate("/departments");
+      }
+    };
+    loadDepartment();
+  }, [department, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +101,13 @@ function UpdateDepartment() {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           <TextField
+            label="ID"
+            name="id"
+            value={formData.id}
+            fullWidth
+            disabled // Không cho sửa id
+          />
+          <TextField
             label="Tên phòng ban"
             name="name"
             value={formData.name}
@@ -98,6 +120,8 @@ function UpdateDepartment() {
             name="description"
             value={formData.description}
             onChange={handleChange}
+            multiline
+            rows={4}
             fullWidth
             required
           />

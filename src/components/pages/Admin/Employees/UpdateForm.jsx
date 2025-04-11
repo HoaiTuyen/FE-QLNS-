@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Container,
@@ -14,16 +14,18 @@ import {
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import {
+  fetchEmployeeById,
   updateEmployee,
-  fetchUsers, // Sử dụng fetchUsers hoặc fetchAvailableUsers
+  fetchUsersNullEmployee,
+  fetchUserById,
   fetchDepartments,
   fetchPositionsByDepartment,
 } from "../../../../services/adminService";
 import { toast } from "react-toastify";
 
 function UpdateEmployee() {
-  const [open, setOpen] = React.useState(true);
-  const [formData, setFormData] = React.useState({
+  const [open, setOpen] = useState(true);
+  const [formData, setFormData] = useState({
     id: "",
     fullName: "",
     dateOfBirth: "",
@@ -31,15 +33,15 @@ function UpdateEmployee() {
     phone: "",
     address: "",
     joiningDate: "",
-    employeeStatus: "WORKING",
+    employeeStatus: "",
     userId: "",
-    positionId: "",
     departmentId: "",
+    positionId: "",
   });
-  const [users, setUsers] = React.useState([]);
-  const [positions, setPositions] = React.useState([]);
-  const [departments, setDepartments] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [users, setUsers] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [positions, setPositions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,91 +49,88 @@ function UpdateEmployee() {
 
   const toggleDrawer = () => setOpen(!open);
 
-  // Điền dữ liệu nhân viên từ state
-  React.useEffect(() => {
-    if (employee) {
-      setFormData({
-        id: employee.id || "",
-        fullName: employee.fullName || "",
-        dateOfBirth: employee.dateOfBirth
-          ? new Date(employee.dateOfBirth).toISOString().split("T")[0]
-          : "",
-        gender: employee.gender || "",
-        phone: employee.phone || "",
-        address: employee.address || "",
-        joiningDate: employee.joiningDate
-          ? new Date(employee.joiningDate).toISOString().split("T")[0]
-          : "",
-        employeeStatus: employee.employeeStatus || "WORKING",
-        userId: employee.userId || "",
-        positionId: employee.positionId || "",
-        departmentId: employee.departmentId || "",
-      });
-    } else {
-      console.log("Không nhận được dữ liệu employee từ state");
-    }
-  }, [employee]);
-
-  // Tải dữ liệu tham chiếu ban đầu
-  React.useEffect(() => {
+  // Fetch dữ liệu khi component mount
+  useEffect(() => {
     const loadData = async () => {
       try {
-        const [userData, departmentData] = await Promise.all([
-          fetchUsers(), // Hoặc fetchAvailableUsers(employee?.userId) nếu có API
-          fetchDepartments(),
-        ]);
+        // Fetch danh sách user chưa sử dụng
+        const userNullData = await fetchUsersNullEmployee();
+        let userList = userNullData || [];
 
-        // Lọc user đã sử dụng, giữ lại user hiện tại
-        const currentUserId = employee?.userId;
-        const filteredUsers = userData.filter(
-          (user) => !user.isAssigned || user.id === currentUserId // Giả định có trường isAssigned
-        );
-        setUsers(filteredUsers || []);
+        // Fetch danh sách phòng ban
+        const deptData = await fetchDepartments();
+        const deptList = deptData.departments || deptData || [];
+        setDepartments(deptList);
 
-        setDepartments(departmentData || []);
+        // Fetch chi tiết nhân viên và user hiện tại
+        if (employee?.id) {
+          const empData = await fetchEmployeeById(employee.id);
+          setFormData({
+            id: empData.id || employee.id,
+            fullName: empData.fullName || "",
+            dateOfBirth: empData.dateOfBirth
+              ? empData.dateOfBirth.split("T")[0]
+              : "",
+            gender: empData.gender || "MALE",
+            phone: empData.phone || "",
+            address: empData.address || "",
+            joiningDate: empData.joiningDate
+              ? empData.joiningDate.split("T")[0]
+              : "",
+            employeeStatus: empData.employeeStatus || "WORKING",
+            userId: empData.userId || "",
+            departmentId: "",
+            positionId: empData.positionId || "",
+          });
+          console.log("Dữ liệu empData.userID:", empData.userID);
 
-        // Tải positions ban đầu dựa trên departmentId
-        if (employee?.departmentId) {
-          const positionData = await fetchPositionsByDepartment(
-            employee.departmentId
-          );
-          console.log("Danh sách chức vụ ban đầu:", positionData);
-          setPositions(positionData || []);
+          // Fetch user hiện tại và gộp vào danh sách
+          if (empData.userId) {
+            const currentUser = await fetchUserById(empData.userId);
+            // Tránh trùng lặp nếu user hiện tại đã có trong danh sách
+            if (!userList.some((user) => user.id === currentUser.id)) {
+              userList = [currentUser, ...userList];
+            }
+          }
+          setUsers(userList);
+
+          // Fetch danh sách chức vụ (giả định cần departmentId từ BE)
+          if (empData.positionId && deptList.length > 0) {
+            const posData = await fetchPositionsByDepartment(
+              empData.departmentId || deptList[0].id
+            );
+            setPositions(posData || []);
+          }
+        } else {
+          console.log("Không nhận được employee từ state:", location.state);
+          toast.error("Không tìm thấy nhân viên để cập nhật");
+          navigate("/employees");
         }
       } catch (error) {
-        console.error("Lỗi khi tải dữ liệu tham chiếu:", error);
-        toast.error("Lỗi khi tải dữ liệu tham chiếu");
+        console.error("Lỗi khi tải dữ liệu:", error);
+        toast.error("Lỗi khi tải dữ liệu");
       }
     };
     loadData();
-  }, [employee]);
+  }, [employee, navigate, location.state]);
 
-  // Cập nhật positions khi departmentId thay đổi
-  React.useEffect(() => {
+  // Fetch position khi departmentId thay đổi
+  useEffect(() => {
     const loadPositions = async () => {
       if (formData.departmentId) {
         try {
-          const positionData = await fetchPositionsByDepartment(
+          const posData = await fetchPositionsByDepartment(
             formData.departmentId
           );
-          console.log("Danh sách chức vụ nhận được:", positionData);
-          setPositions(positionData || []);
-          if (
-            positionData?.length &&
-            !positionData.some((pos) => pos.id === formData.positionId)
-          ) {
-            setFormData((prev) => ({
-              ...prev,
-              positionId: positionData[0].id,
-            }));
-          }
+          setPositions(posData || []);
+          setFormData((prev) => ({
+            ...prev,
+            positionId: posData.length > 0 ? posData[0].id : "",
+          }));
         } catch (error) {
           console.error("Lỗi khi tải danh sách chức vụ:", error);
           toast.error("Lỗi khi tải danh sách chức vụ");
         }
-      } else {
-        setPositions([]);
-        setFormData((prev) => ({ ...prev, positionId: "" }));
       }
     };
     loadPositions();
@@ -148,22 +147,26 @@ function UpdateEmployee() {
     try {
       const employeeData = {
         id: Number(formData.id),
-        fullName: formData.fullName,
-        dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
+        fullName: formData.fullName.trim(),
+        dateOfBirth: formData.dateOfBirth + "T00:00:00.000Z",
         gender: formData.gender,
-        phone: formData.phone,
-        address: formData.address,
-        joiningDate: new Date(formData.joiningDate).toISOString(),
+        phone: formData.phone.trim(),
+        address: formData.address.trim(),
+        joiningDate: formData.joiningDate + "T00:00:00.000Z",
         employeeStatus: formData.employeeStatus,
         userId: Number(formData.userId),
         positionId: Number(formData.positionId),
       };
-      console.log("Dữ liệu gửi đi:", employeeData);
+      console.log("Dữ liệu gửi đi trong handleSubmit:", employeeData);
       await updateEmployee(employeeData);
       toast.success("Cập nhật nhân viên thành công");
       navigate("/employees");
     } catch (error) {
-      console.error("Lỗi từ server:", error.response?.data);
+      console.error("Lỗi từ server:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
       toast.error(
         "Lỗi khi cập nhật nhân viên: " +
           (error.response?.data?.message || "Lỗi không xác định")
@@ -197,7 +200,14 @@ function UpdateEmployee() {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           <TextField
-            label="Họ và Tên"
+            label="ID"
+            name="id"
+            value={formData.id}
+            fullWidth
+            disabled
+          />
+          <TextField
+            label="Họ và tên"
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
@@ -250,7 +260,7 @@ function UpdateEmployee() {
             onChange={handleChange}
             fullWidth
             InputLabelProps={{ shrink: true }}
-            disabled
+            required
           />
           <FormControl fullWidth required>
             <InputLabel>Trạng thái</InputLabel>
@@ -261,7 +271,7 @@ function UpdateEmployee() {
               label="Trạng thái"
             >
               <MenuItem value="WORKING">Đang làm việc</MenuItem>
-              <MenuItem value="INACTIVE">Nghỉ việc</MenuItem>
+              <MenuItem value="RESIGNED">Đã nghỉ việc</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth required>
@@ -271,6 +281,7 @@ function UpdateEmployee() {
               value={formData.userId}
               onChange={handleChange}
               label="User"
+              disabled={users.length === 0}
             >
               {users.map((user) => (
                 <MenuItem key={user.id} value={user.id}>
@@ -286,6 +297,7 @@ function UpdateEmployee() {
               value={formData.departmentId}
               onChange={handleChange}
               label="Phòng ban"
+              disabled={departments.length === 0}
             >
               {departments.map((dept) => (
                 <MenuItem key={dept.id} value={dept.id}>
@@ -301,7 +313,7 @@ function UpdateEmployee() {
               value={formData.positionId}
               onChange={handleChange}
               label="Chức vụ"
-              disabled={!formData.departmentId}
+              disabled={positions.length === 0}
             >
               {positions.map((pos) => (
                 <MenuItem key={pos.id} value={pos.id}>
@@ -314,7 +326,7 @@ function UpdateEmployee() {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={loading}
+            disabled={loading || !formData.userId || !formData.positionId}
             sx={{ mt: 2 }}
           >
             {loading ? "Đang cập nhật..." : "Cập Nhật Nhân Viên"}

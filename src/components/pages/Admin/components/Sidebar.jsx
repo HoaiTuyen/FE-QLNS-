@@ -9,8 +9,8 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
 import PeopleIcon from "@mui/icons-material/People";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
 import MoneyIcon from "@mui/icons-material/Money";
@@ -21,6 +21,7 @@ const drawerWidth = 240;
 function Sidebar({ open }) {
   const navigate = useNavigate();
   const menuItems = [
+    { text: "Trang chủ", icon: <HomeIcon />, navigate: "/admin" },
     { text: "Quản lý nhân viên", icon: <PeopleIcon />, navigate: "/employees" },
     {
       text: "Quản lý phòng ban",

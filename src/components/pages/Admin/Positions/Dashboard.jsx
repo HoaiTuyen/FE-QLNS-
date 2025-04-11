@@ -52,7 +52,7 @@ function Positions() {
   }, [page, loadPositions]);
 
   const handleEdit = (position) => {
-    navigate("/position/edit", { state: { position } });
+    navigate("/positions/update", { state: { position } });
   };
 
   const handleDelete = async (id) => {
@@ -82,7 +82,7 @@ function Positions() {
     loadPositions();
   };
 
-  console.log("Positions:", positions); // Log để kiểm tra dữ liệu;
+  //console.log("Positions:", positions); // Log để kiểm tra dữ liệu;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>

@@ -91,158 +91,143 @@ const EmployeeDashboard = () => {
   };
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{
-        minHeight: "80vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Header và Sidebar */}
-
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <Header toggleDrawer={toggleDrawer} />
       <Sidebar open={open} toggleDrawer={toggleDrawer} />
-      <Box sx={{ display: "flex", flexGrow: 1 }}>
+      <Container
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          mt: 8,
+          ml: open ? "240px" : 0,
+          transition: "margin-left 0.3s",
+        }}
+      >
+        <Typography variant="h4" fontWeight="bold" align="center" gutterBottom>
+          Quản lý nhân viên
+        </Typography>
         <Box
-          component="main"
           sx={{
-            flexGrow: 1,
-            p: 3,
-            mt: 8,
-            transition: "margin-left 0.3s",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 4,
           }}
         >
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            align="center"
-            gutterBottom
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/employees/create")}
           >
-            Quản lý nhân viên
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 4,
-            }}
+            Thêm Nhân Viên
+          </Button>
+          <TextField
+            label="Tìm kiếm nhân viên"
+            variant="outlined"
+            size="small"
+            sx={{ width: "50%" }}
+            value={searchQuery}
+            onChange={(e) =>
+              handleSearch() + setSearchQuery(e.target.value.toLowerCase())
+            }
+          />
+        </Box>
+        {loading ? (
+          <Typography align="center">Đang tải dữ liệu...</Typography>
+        ) : (
+          <TableContainer component={Paper} sx={{ maxHeight: "70vh" }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Họ và Tên</TableCell>
+                  <TableCell>Ngày sinh</TableCell>
+                  <TableCell>Giới tính</TableCell>
+                  <TableCell>Số điện thoại</TableCell>
+                  <TableCell>Địa chỉ</TableCell>
+                  <TableCell>Ngày vào làm</TableCell>
+                  <TableCell>Trạng thái</TableCell>
+                  <TableCell>Hành động</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {employees
+                  .filter((emp) =>
+                    emp.fullName.toLowerCase().includes(searchQuery)
+                  )
+                  .map((emp) => (
+                    <TableRow key={emp.id}>
+                      <TableCell>{emp.id}</TableCell>
+                      <TableCell>{emp.fullName}</TableCell>
+                      <TableCell>{formatDate(emp.dateOfBirth)}</TableCell>
+                      <TableCell>
+                        {emp.gender === "MALE" ? "Nam" : "Nữ"}
+                      </TableCell>
+                      <TableCell>{emp.phone}</TableCell>
+                      <TableCell>{emp.address}</TableCell>
+                      <TableCell>{formatDate(emp.joiningDate)}</TableCell>
+                      <TableCell>{emp.employeeStatus}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleEdit(emp)}
+                          sx={{ mr: 1 }}
+                        >
+                          Sửa
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleDelete(emp.id)}
+                        >
+                          Xóa
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+        <Box
+          sx={{
+            mt: "auto", // Đẩy xuống dưới cùng
+            py: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            onClick={() => setPage(0)}
+            sx={{ minWidth: "120px" }}
+            disabled={page === 0}
           >
+            Trang đầu
+          </Button>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Button
               variant="contained"
-              color="primary"
-              onClick={() => navigate("/employees/create")}
-            >
-              Thêm Nhân Viên
-            </Button>
-            <TextField
-              label="Tìm kiếm nhân viên"
-              variant="outlined"
-              size="small"
-              sx={{ width: "50%" }}
-              value={searchQuery}
-              onChange={(e) =>
-                handleSearch() + setSearchQuery(e.target.value.toLowerCase())
-              }
-            />
-          </Box>
-          {loading ? (
-            <Typography align="center">Đang tải dữ liệu...</Typography>
-          ) : (
-            <TableContainer component={Paper} sx={{ maxHeight: "70vh" }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Họ và Tên</TableCell>
-                    <TableCell>Ngày sinh</TableCell>
-                    <TableCell>Giới tính</TableCell>
-                    <TableCell>Số điện thoại</TableCell>
-                    <TableCell>Địa chỉ</TableCell>
-                    <TableCell>Ngày vào làm</TableCell>
-                    <TableCell>Trạng thái</TableCell>
-                    <TableCell>Hành động</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {employees
-                    .filter((emp) =>
-                      emp.fullName.toLowerCase().includes(searchQuery)
-                    )
-                    .map((emp) => (
-                      <TableRow key={emp.id}>
-                        <TableCell>{emp.id}</TableCell>
-                        <TableCell>{emp.fullName}</TableCell>
-                        <TableCell>{formatDate(emp.dateOfBirth)}</TableCell>
-                        <TableCell>
-                          {emp.gender === "MALE" ? "Nam" : "Nữ"}
-                        </TableCell>
-                        <TableCell>{emp.phone}</TableCell>
-                        <TableCell>{emp.address}</TableCell>
-                        <TableCell>{formatDate(emp.joiningDate)}</TableCell>
-                        <TableCell>{emp.employeeStatus}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleEdit(emp)}
-                            sx={{ mr: 1 }}
-                          >
-                            Sửa
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => handleDelete(emp.id)}
-                          >
-                            Xóa
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-          <Box
-            sx={{
-              mt: "auto", // Đẩy xuống dưới cùng
-              py: 2,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              variant="contained"
-              onClick={() => setPage(0)}
-              sx={{ minWidth: "120px" }}
+              onClick={handlePreviousPage}
               disabled={page === 0}
             >
-              Trang đầu
+              Trang trước
             </Button>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Button
-                variant="contained"
-                onClick={handlePreviousPage}
-                disabled={page === 0}
-              >
-                Trang trước
-              </Button>
-              <Typography>Trang {page + 1}</Typography>
-              <Button
-                variant="contained"
-                onClick={handleNextPage}
-                disabled={page >= totalPages - 1}
-              >
-                Trang sau
-              </Button>
-            </Box>
+            <Typography>Trang {page + 1}</Typography>
+            <Button
+              variant="contained"
+              onClick={handleNextPage}
+              disabled={page >= totalPages - 1}
+            >
+              Trang sau
+            </Button>
           </Box>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
