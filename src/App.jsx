@@ -18,15 +18,15 @@ import PositionUpdateForm from "./components/pages/Admin/Positions/UpdateForm";
 
 import SalaryDashboard from "./components/pages/Admin/Salaries/Dashboard";
 import SalaryCreateForm from "./components/pages/Admin/Salaries/CreateForm";
-//import SalaryUpdateForm from "./components/pages/Admin/Salaries/UpdateForm";
+import SalaryUpdateForm from "./components/pages/Admin/Salaries/UpdateForm";
 
 import UserDashboard from "./components/pages/Admin/Users/Dashboard";
 import UserCreateForm from "./components/pages/Admin/Users/CreateForm";
-//import UserUpdateForm from "./components/pages/Admin/Users/UpdateForm";
+import UserUpdateForm from "./components/pages/Admin/Users/UpdateForm";
 
 import ContractDashboard from "./components/pages/Admin/Contracts/Dashboard";
 import ContractCreateForm from "./components/pages/Admin/Contracts/CreateForm";
-//import ContractUpdateForm from "./components/pages/Admin/Contracts/UpdateForm";
+import ContractUpdateForm from "./components/pages/Admin/Contracts/UpdateForm";
 
 import { getCurrentUser } from "./services/authService";
 import { ToastContainer, toast } from "react-toastify";
@@ -183,14 +183,14 @@ function App() {
             }
           />
 
-          {/* <Route
+          <Route
             path="/salaries/update"
             element={
               <PrivateRoute allowedTypes={["ADMIN"]}>
                 <SalaryUpdateForm />
               </PrivateRoute>
             }
-          /> */}
+          />
 
           <Route
             path="/users"
@@ -210,14 +210,14 @@ function App() {
             }
           />
 
-          {/* <Route
+          <Route
             path="/users/update"
             element={
               <PrivateRoute allowedTypes={["ADMIN"]}>
                 <UserUpdateForm />
               </PrivateRoute>
             }
-          /> */}
+          />
 
           <Route
             path="/contracts"
@@ -237,14 +237,14 @@ function App() {
             }
           />
 
-          {/* <Route
-            path="/users/update"
+          <Route
+            path="/contracts/update"
             element={
               <PrivateRoute allowedTypes={["ADMIN"]}>
-                <UserUpdateForm />
+                <ContractUpdateForm />
               </PrivateRoute>
             }
-          /> */}
+          />
 
           {/* UserPage */}
 

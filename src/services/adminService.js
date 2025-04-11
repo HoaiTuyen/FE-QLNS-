@@ -9,7 +9,8 @@ export const fetchEmployees = async (page = 0, size = 10) => {
     const response = await axiosClient.get(
       `/employee/listbypage?page=${page}&size=${size}`
     );
-    return response.data;
+    //console.log("Dữ liệu từ fetchEmployees:", response.data);
+    return response.data.employees || response.data;
   } catch (error) {
     console.error(
       "❌ Lỗi khi lấy danh sách nhân viên:",
@@ -218,6 +219,17 @@ export const fetchSalaries = async () => {
   return response.data;
 };
 
+export const fetchSalaryById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/salary/${id}`);
+    console.log("Dữ liệu từ fetchSalaryById:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết bảng lương:", error);
+    throw error;
+  }
+};
+
 export const fetchSalariesListByPage = async (page = 0, size = 10) => {
   try {
     const response = await axiosClient.get(`/salary/listbypage?page=${page}&size=${size}`);
@@ -242,8 +254,8 @@ export const addSalary = async (salaryData) => {
 
 export const updateSalary = async (salaryData) => {
   try {
-    //console.log("Dữ liệu nhận được trong updateSalary:", salaryData);
-    const response = await axiosClient.put(`/salary/update/`, salaryData);
+    console.log("Dữ liệu nhận được trong updateSalary:", salaryData);
+    const response = await axiosClient.put(`/salary/update`, salaryData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật chức vụ: ", error);
@@ -270,7 +282,7 @@ export const fetchUsers = async () => {
 
 export const fetchUserById = async (id) => {
   try {
-    const response = await axiosClient.get(`/users/${id}`);
+    const response = await axiosClient.get(`/user/${id}`);
     console.log("Dữ liệu từ fetchUserById:", response.data);
     return response.data;
   } catch (error) {
@@ -303,8 +315,8 @@ export const addUser = async (userData) => {
 
 export const updateUser = async (userData) => {
   try {
-    //console.log("Dữ liệu nhận được trong updateUser:", userData);
-    const response = await axiosClient.put(`/user/update/`, userData);
+    console.log("Dữ liệu nhận được trong updateUser:", userData);
+    const response = await axiosClient.put(`/user/update`, userData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật người dùng: ", error);
@@ -324,9 +336,20 @@ export const deleteUser = async (id) => {
 
 // Các hàm xử lý hợp đồng
 
-export const fetchContracts= async () => {
+export const fetchContracts = async () => {
   const response = await axiosClient.get("/contract/list");
   return response.data;
+};
+
+export const fetchContractById = async (id) => {
+  try {
+    const response = await axiosClient.get(`/contract/${id}`);
+    //console.log("Dữ liệu từ fetchContractById:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết hợp đồng:", error);
+    throw error;
+  }
 };
 
 export const fetchContractsListByPage = async (page = 0, size = 10) => {
@@ -354,7 +377,7 @@ export const addContract = async (contractData) => {
 export const updateContract = async (contractData) => {
   try {
     //console.log("Dữ liệu nhận được trong updateContract:", contractData);
-    const response = await axiosClient.put(`/contract/update/`, contractData);
+    const response = await axiosClient.put(`/contract/update`, contractData);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi cập nhật hợp đồng: ", error);

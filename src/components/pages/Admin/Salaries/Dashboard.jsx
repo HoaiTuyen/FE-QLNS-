@@ -52,7 +52,7 @@ function Salaries() {
   }, [page, loadSalaries]);
 
   const handleEdit = (salary) => {
-    navigate("/salaries/edit", { state: { salary } });
+    navigate("/salaries/update", { state: { salary } });
   };
 
   const handleDelete = async (id) => {

@@ -52,7 +52,7 @@ function Users() {
   }, [page, loadUsers]);
 
   const handleEdit = (user) => {
-    navigate("/users/edit", { state: { user } });
+    navigate("/users/update", { state: { user } });
   };
 
   const handleDelete = async (id) => {
@@ -81,8 +81,6 @@ function Users() {
     setPage(0);
     loadUsers();
   };
-
-  //console.log("Users:", users); // Log để kiểm tra dữ liệu;
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>

@@ -52,7 +52,7 @@ function Contracts() {
   }, [page, loadContracts]);
 
   const handleEdit = (contract) => {
-    navigate("/contracts/edit", { state: { contract } });
+    navigate("/contracts/update", { state: { contract } });
   };
 
   const handleDelete = async (id) => {
