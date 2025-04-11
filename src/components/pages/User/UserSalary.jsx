@@ -13,10 +13,8 @@ const UserSalary = () => {
   useEffect(() => {
     const fetchSalary = async () => {
       try {
-        // Lấy thông tin nhân viên theo userId
         const employeeRes = await getEmployeeById(user.id);
 
-        // Kiểm tra sự tồn tại của employee và employee.data
         if (!employeeRes || !employeeRes.data) {
           toast.error("Không tìm thấy thông tin nhân viên.");
           return;
@@ -24,14 +22,15 @@ const UserSalary = () => {
 
         const employeeId = employeeRes.data.id;
 
-        // Lấy thông tin lương của nhân viên
         const res = await getSalary(employeeId);
 
         if (res?.status === 200) {
-          toast.success(res.message);
-          setSalary(res.data?.salaries || []);
+          if (res.data?.salaries && res.data.salaries.length > 0) {
+            toast.success(res.message);
+            setSalary(res.data?.salaries || []);
+          }
         } else {
-          toast.error("Không có dữ liệu lương.");
+          toast.error(res.message);
         }
       } catch (err) {
         toast.error(err);

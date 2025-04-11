@@ -44,12 +44,24 @@ const UserDepartment = () => {
       <h2>Thông tin Vị trí và Phòng ban</h2>
       <Descriptions bordered column={1}>
         {position && (
-          <Descriptions.Item label="Vị trí">{position.name}</Descriptions.Item>
+          <>
+            <Descriptions.Item label="Vị trí">
+              {position.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Mô tả Vị trí">
+              {position.description || "Không có mô tả"}
+            </Descriptions.Item>
+          </>
         )}
         {department && (
-          <Descriptions.Item label="Phòng ban">
-            {department.name}
-          </Descriptions.Item>
+          <>
+            <Descriptions.Item label="Phòng ban">
+              {department.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Mô tả Phòng ban">
+              {department.description || "Không có mô tả"}
+            </Descriptions.Item>
+          </>
         )}
       </Descriptions>
     </div>
