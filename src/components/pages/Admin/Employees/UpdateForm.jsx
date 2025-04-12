@@ -277,7 +277,7 @@ function UpdateEmployee() {
             <InputLabel>User</InputLabel>
             <Select
               name="userId"
-              value={formData.userId}
+              value={formData.userId || ""}
               onChange={handleChange}
               label="User"
               disabled={users.length === 0}

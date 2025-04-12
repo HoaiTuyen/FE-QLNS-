@@ -87,7 +87,7 @@ const EmployeeDashboard = () => {
 
   const handleEdit = (employee) => {
     navigate("/employees/update", { state: { employee } }); // Truyền dữ liệu qua state
-    console.log("Employee nhận được:", employee);
+    //console.log("Employee nhận được:", employee);
   };
 
   return (

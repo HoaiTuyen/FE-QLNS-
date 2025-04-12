@@ -49,7 +49,7 @@ export const fetchEmployeesListByPage = async (page = 0, size = 10) => {
 export const fetchEmployeeById = async (id) => {
   try {
     const response = await axiosClient.get(`/employee/${id}`);
-    console.log("Dữ liệu từ fetchEmployeeById:", response.data);
+    //console.log("Dữ liệu từ fetchEmployeeById:", response.data);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết nhân viên:", error);
@@ -304,7 +304,7 @@ export const fetchUsers = async () => {
 export const fetchUserById = async (id) => {
   try {
     const response = await axiosClient.get(`/user/${id}`);
-    console.log("Dữ liệu từ fetchUserById:", response.data);
+    //console.log("Dữ liệu từ fetchUserById:", response.data);
     return response.data;
   } catch (error) {
     console.error("Lỗi khi lấy chi tiết user:", error);
