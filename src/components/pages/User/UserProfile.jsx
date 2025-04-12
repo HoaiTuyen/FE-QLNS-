@@ -16,7 +16,6 @@ const UserProfile = () => {
       try {
         const userDetail = await getDetailUser(user.email);
         const res = await getEmployeeById(userDetail.data.employee.id);
-        console.log(res);
 
         if (res.data) {
           setProfile(res.data);

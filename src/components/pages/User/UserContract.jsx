@@ -19,11 +19,8 @@ const UserContract = () => {
           const employeeId = employeeRes.data.employee.id;
           const contractRes = await getContract(employeeId);
           const contractList = contractRes.data?.contracts || [];
-
           setContracts(contractList);
           toast.success(contractRes.message || "Success");
-        } else {
-          toast.error("Không tìm thấy hợp đồng nhân viên.");
         }
       } catch (err) {
         toast.error(err);
