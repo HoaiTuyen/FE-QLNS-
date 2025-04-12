@@ -79,10 +79,9 @@ function UpdateEmployee() {
               : "",
             employeeStatus: empData.employeeStatus || "WORKING",
             userId: empData.userId || "",
-            departmentId: "",
+            departmentId: empData.departmentId || "",
             positionId: empData.positionId || "",
           });
-          console.log("Dữ liệu empData.userID:", empData.userID);
 
           // Fetch user hiện tại và gộp vào danh sách
           if (empData.userId) {
@@ -326,7 +325,15 @@ function UpdateEmployee() {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={loading || !formData.userId || !formData.positionId}
+            disabled={
+              loading ||
+              !formData.userId ||
+              !formData.positionId ||
+              !formData.departmentId ||
+              !formData.fullName ||
+              !formData.phone ||
+              !formData.address
+            }
             sx={{ mt: 2 }}
           >
             {loading ? "Đang cập nhật..." : "Cập Nhật Nhân Viên"}

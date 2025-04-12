@@ -16,7 +16,7 @@ import {
   Button,
 } from "@mui/material";
 import {
-  fetchEmployees,
+  fetchEmployeesListByPage,
   deleteEmployee,
 } from "../../../../services/adminService";
 import Header from "../components/Header";
@@ -38,7 +38,7 @@ const EmployeeDashboard = () => {
   const loadEmployees = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchEmployees(page, pageSize);
+      const data = await fetchEmployeesListByPage(page, pageSize);
       setEmployees(data.employees);
       setTotalPages(data.totalPages); // Cập nhật tổng số trang
     } catch (error) {

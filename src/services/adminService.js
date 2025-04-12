@@ -25,6 +25,27 @@ export const fetchEmployees = async (page = 0, size = 10) => {
   }
 };
 
+export const fetchEmployeesListByPage = async (page = 0, size = 10) => {
+  try {
+    const response = await axiosClient.get(
+      `/employee/listbypage?page=${page}&size=${size}`
+    );
+    //console.log("Dữ liệu từ fetchEmployees:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy danh sách nhân viên:",
+      error.response?.data || error
+    );
+    toast.error(
+      `Lỗi tải danh sách: ${
+        error.response?.data?.message || "Lỗi không xác định"
+      }`
+    );
+    return { data: [], error: error.response?.data || "Lỗi không xác định" };
+  }
+};
+
 export const fetchEmployeeById = async (id) => {
   try {
     const response = await axiosClient.get(`/employee/${id}`);
