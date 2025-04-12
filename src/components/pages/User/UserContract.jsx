@@ -14,10 +14,13 @@ const UserContract = () => {
     const fetchContracts = async () => {
       try {
         const employeeRes = await getDetailUser(user.email);
+        console.log(employeeRes);
 
         if (employeeRes?.data?.employee?.id) {
           const employeeId = employeeRes.data.employee.id;
           const contractRes = await getContract(employeeId);
+          console.log(contractRes);
+
           const contractList = contractRes.data?.contracts || [];
           setContracts(contractList);
           toast.success(contractRes.message || "Success");
@@ -52,8 +55,8 @@ const UserContract = () => {
     },
     {
       title: "Ghi chú",
-      dataIndex: "note",
-      key: "note",
+      dataIndex: "notes",
+      key: "notes",
     },
   ];
 

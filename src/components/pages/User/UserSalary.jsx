@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Empty, Table } from "antd";
-import { getSalary, getEmployeeById } from "../../../services/userService";
+import {
+  getSalary,
+  getEmployeeById,
+  getDetailUser,
+} from "../../../services/userService";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
@@ -13,16 +17,17 @@ const UserSalary = () => {
   useEffect(() => {
     const fetchSalary = async () => {
       try {
-        const employeeRes = await getEmployeeById(user.id);
-
+        const detailUser = await getDetailUser(user.email);
+        const idEmployeeSalary = detailUser.data.employee.id;
+        const employeeRes = await getEmployeeById(idEmployeeSalary);
         if (!employeeRes || !employeeRes.data) {
           toast.error("Không tìm thấy thông tin nhân viên.");
           return;
         }
 
-        const employeeId = employeeRes.data.id;
+        // const employeeId = employeeRes.data.id;
 
-        const res = await getSalary(employeeId);
+        const res = await getSalary(employeeRes.data.id);
 
         if (res?.status === 200) {
           if (res.data?.salaries && res.data.salaries.length > 0) {

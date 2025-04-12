@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Descriptions, Spin } from "antd";
 import { toast } from "react-toastify";
-import { getEmployeeById } from "../../../services/userService"; // Giả sử bạn có hàm này trong userService.js
+import { getDetailUser, getEmployeeById } from "../../../services/userService"; // Giả sử bạn có hàm này trong userService.js
 import EmptyDataFallback from "../../common/EmptyDataFallback";
 const UserDepartment = () => {
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,8 @@ const UserDepartment = () => {
   useEffect(() => {
     const fetchUserDepartment = async () => {
       try {
-        const res = await getEmployeeById(user.id);
+        const detailUser = await getDetailUser(user.email);
+        const res = await getEmployeeById(detailUser.data.employee.id);
         console.log(res);
 
         if (res?.data) {
