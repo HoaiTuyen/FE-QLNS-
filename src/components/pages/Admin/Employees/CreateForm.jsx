@@ -73,7 +73,7 @@ function AddEmployee() {
           if (positionData?.length) {
             setFormData((prev) => ({
               ...prev,
-              positionId: positionData[0].id,
+              positionId: userData.positionId || positionData[0].id,
             }));
           }
         }
