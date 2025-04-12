@@ -63,7 +63,8 @@ function UpdateContract() {
               ? contractData.endDate.split("T")[0]
               : "",
             notes: contractData.notes || "",
-            employeeId: empList.length > 0 ? empList[0].id : "", // Mặc định chọn nhân viên đầu tiên
+            employeeId:
+              contract.employeeId || (empList.length > 0 ? empList[0].id : ""), // Mặc định chọn nhân viên đầu tiên
           });
         } else {
           console.log("Không nhận được contract từ state:", location.state);
@@ -207,7 +208,14 @@ function UpdateContract() {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={loading || !formData.employeeId}
+            disabled={
+              loading ||
+              !formData.employeeId ||
+              !formData.startDate ||
+              !formData.endDate ||
+              !formData.contractType ||
+              !formData.notes
+            }
             sx={{ mt: 2 }}
           >
             {loading ? "Đang cập nhật..." : "Cập Nhật Hợp Đồng"}

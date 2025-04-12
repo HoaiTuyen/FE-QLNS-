@@ -303,7 +303,18 @@ function AddEmployee() {
             type="submit"
             variant="contained"
             color="primary"
-            disabled={loading}
+            disabled={
+              loading ||
+              !formData.fullName ||
+              !formData.dateOfBirth ||
+              !formData.gender ||
+              !formData.phone ||
+              !formData.address ||
+              !formData.joiningDate ||
+              !formData.userId ||
+              !formData.departmentId ||
+              !formData.positionId
+            }
             sx={{ mt: 2 }}
           >
             {loading ? "Đang thêm..." : "Thêm Nhân Viên"}

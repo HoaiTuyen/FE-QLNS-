@@ -68,7 +68,7 @@ function UpdatePosition() {
       }
     };
     loadData();
-  }, [position, navigate]);
+  }, [position, navigate, location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

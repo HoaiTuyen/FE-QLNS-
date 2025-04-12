@@ -108,7 +108,7 @@ function UpdateUser() {
         }}
       >
         <Typography variant="h4" align="center" gutterBottom>
-          Cập Nhật User
+          Cập Nhật Người Dùng
         </Typography>
         <Box
           component="form"

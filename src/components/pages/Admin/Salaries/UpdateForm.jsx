@@ -59,7 +59,9 @@ function UpdateSalary() {
             effectiveDate: salaryData.effectiveDate
               ? salaryData.effectiveDate.split("T")[0]
               : "",
-            employeeId: empList.length > 0 ? empList[0].id : "", // Mặc định chọn nhân viên đầu tiên
+            employeeId:
+              salaryData.employeeId ||
+              (empList.length > 0 ? empList[0].id : ""), // Mặc định chọn nhân viên đầu tiên
           });
         } else {
           console.log("Không nhận được salary từ state:", location.state);
