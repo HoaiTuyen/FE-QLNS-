@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser, registerUser } from "../../services/authService";
-import { Spin, Form, Input, Button, Typography } from "antd";
+import { Spin, Form, Input, Button, Typography, Layout } from "antd";
 import { toast } from "react-toastify";
 
 const { Text, Link } = Typography;
+const { Header } = Layout;
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -80,6 +81,21 @@ const Login = () => {
   };
   return (
     <Spin spinning={loading} tip="Đang xử lí..." size="large">
+      <Header
+        style={{
+          backgroundColor: "#fff",
+          padding: "0 24px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid #eee",
+        }}
+      >
+        <div style={{ fontWeight: "bold", fontSize: "x-large" }}>
+          Hệ thống quản lý nhân sự
+        </div>
+        <div>Thứ 3 Ca sáng, Nhóm 16</div>
+      </Header>
       <div style={{ maxWidth: 400, margin: "0 auto", marginTop: 60 }}>
         <h2 style={{ textAlign: "center", marginBottom: 24 }}>
           {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
